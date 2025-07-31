@@ -6,5 +6,45 @@
 @OnlyOpen=true
 @ExtraAccList='11210'
 @invNo=PI00000930
+@UserName=bp
+###
+
+GET {{AccountingV2_HostAddress}}/api/BankAccountLedgerItems?toDate={{ToDate}}&ExtraAccList={{ExtraAccList}}
+
+###
+
+GET {{AccountingV2_HostAddress}}/api/CustAgedInvoices?Company={{Company}}
+
+###
+
+GET {{AccountingV2_HostAddress}}/api/CustomerInvoices?FromDate={{FromDate}}&ToDate={{ToDate}}&Company={{Company}}
+
+###
+
+GET {{AccountingV2_HostAddress}}/api/dbtest
+
+###
+
+GET {{AccountingV2_HostAddress}}/api/GetEnabledComps?UserName={{UserName}}
+
+###
+
+GET {{AccountingV2_HostAddress}}/api/LateCustomerInvoices?Company={{Company}}
+
+###
+
+GET {{AccountingV2_HostAddress}}/api/PurchInvAndExpenses
+
+###
+
+GET {{AccountingV2_HostAddress}}/api/PurchInvAndExpenses/betweenDates?FromDate={{FromDate}}&ToDate={{ToDate}}
+
+###
+
+GET {{AccountingV2_HostAddress}}/api/username
+
+###
+
+GET {{AccountingV2_HostAddress}}/api/VendorInvoices?FromDate={{FromDate}}&ToDate={{ToDate}}&Company={{Company}}&OnlyOpen={{OnlyOpen}}
 
 ###
