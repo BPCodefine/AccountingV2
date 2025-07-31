@@ -8,11 +8,9 @@ namespace AccountingV2.Endpoints
         {
             app.MapGet("/api/username", (HttpContext context) =>
             {
-                var username = context.User.Identity?.Name;
-                return Results.Ok(new
-                {
-                    username
-                });
+                var fullName = context.User.Identity?.Name;
+                var userName = fullName?.Split('\\').Last();
+                return Results.Ok(new {userName});
             }).RequireAuthorization();
 
             app.MapGet("/api/dbtest", (DBAccess context) =>

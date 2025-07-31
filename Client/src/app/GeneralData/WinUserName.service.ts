@@ -11,10 +11,11 @@ export class UserService {
 getUsername(): Observable<string> {
   console.log('getUsername() called');
 
-  return this.http.get<{ username: string }>(environment.apiUrl + '/api/username', {withCredentials: true}).pipe(
+  return this.http.get<{ userName: string }>(environment.apiUrl + '/api/username', {withCredentials: true}).pipe(
     map(response => {
       console.log('Response received:', response);
-      const result = response?.username?.trim() ? response.username : 'no user found';
+      console.log('Raw response:', JSON.stringify(response));
+      const result = response?.userName?.trim() ? response.userName : 'no user found';
       console.log('Mapped username:', result);
       return result;
     }),
