@@ -14,7 +14,7 @@ export class BankAccountLedgerService {
   constructor(private httpClient: HttpClient) {}
 
   getLedgerEntries(toDate: Date, fromAccList: string[]): Observable<BankAccountLedgerModel[]> {
-    return this.httpClient.get<BankAccountLedgerModel[]>(this.apiUrl + `?toDate=${toDate.toISOString().split('T')[0]}&ExtraAccList=${encodeURIComponent(fromAccList.join(','))}`);
+    return this.httpClient.get<BankAccountLedgerModel[]>(this.apiUrl + `?ToDate=${toDate.toISOString().split('T')[0]}&ExtraAccList=${encodeURIComponent(fromAccList.join(','))}`);
   }
 
 }

@@ -4,12 +4,12 @@
 @FromDate=2024-01-01
 @ToDate=2024-01-31
 @OnlyOpen=true
-@ExtraAccList='11210'
+@ExtraAccList=
 @invNo=PI00000930
 @UserName=bp
 ###
 
-GET {{AccountingV2_HostAddress}}/api/BankAccountLedgerItems?toDate={{ToDate}}&ExtraAccList={{ExtraAccList}}
+GET {{AccountingV2_HostAddress}}/api/BankAccountLedgerItems?ToDate={{ToDate}}&ExtraAccList={{ExtraAccList}}
 
 ###
 
