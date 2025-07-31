@@ -1,0 +1,10 @@
+﻿@AccountingV2_HostAddress = https://localhost:7111
+
+@Company=CDF
+@FromDate=2024-01-01
+@ToDate=2024-01-31
+@OnlyOpen=true
+@ExtraAccList='11210'
+@invNo=PI00000930
+
+###
