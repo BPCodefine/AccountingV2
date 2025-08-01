@@ -42,7 +42,7 @@
   overflow-x: auto;
   width: 100%;
   min-width: max-content;
-  margin-top: 25px;
+  margin-top: 45px;
   height: calc(100vh - 120px); /* Full height minus the top offset */
 }
 

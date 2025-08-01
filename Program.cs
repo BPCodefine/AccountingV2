@@ -5,16 +5,35 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthentication(Microsoft.AspNetCore.Server.IISIntegration.IISDefaults.AuthenticationScheme);
 builder.Services.AddAuthorization();
 builder.Services.AddSingleton<DBAccess>();
+
+#if DEBUG
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-        policy => policy.AllowAnyOrigin()
+    options.AddPolicy("AllowAngularClient",
+        policy => policy.WithOrigins("http://localhost:4200")
                         .AllowAnyMethod()
-                        .AllowAnyHeader());
+                        .AllowAnyHeader()
+                        .AllowCredentials());
 });
-var app = builder.Build();
+#else
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("OpenPolicy", policy =>
+    {
+        policy
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
+#endif
 
-app.UseCors("AllowAll");
+var app = builder.Build();
+#if DEBUG
+app.UseCors("AllowAngularClient");
+#else
+app.UseCors("OpenPolicy");
+#endif
 app.UseAuthentication();
 app.UseAuthorization();
 

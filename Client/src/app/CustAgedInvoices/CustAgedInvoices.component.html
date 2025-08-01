@@ -1,1 +1,66 @@
-<p>cust-aged-invoices works!</p>
+<div class="dx-fieldset">
+  <div class="header-container">
+    <h2 class="page-header">Customer Invoices</h2>
+    <div class="dx-field">
+      <div class="filter-container">
+        <dx-select-box
+          [items]="enabledComps"
+          [(value)]="selectedComp"
+          placeholder="Select a company"
+          [searchEnabled]="true"
+          (onValueChanged)="FetchInvoices()">
+        </dx-select-box>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="loading" class="spinner">
+  Loading... Please wait
+</div>
+<div *ngIf="!loading">
+  <div #gridWrapper class="grid-wrapper">
+    <dx-data-grid id="CustAgedInvoicesDataGrid"
+      [dataSource]="myStuff"
+      keyExpr="invoiceNo"
+      [allowColumnResizing]="true"
+      [columnAutoWidth]="false"
+      [allowColumnReordering]="true"
+      [showBorders]="true"
+      [height]="gridHeight"
+      [columnHidingEnabled]="false"
+      >
+
+      <dxo-scrolling
+        mode="Infinite"
+        [useNative]="true"
+        showScrollbar="always">
+      </dxo-scrolling>
+      <dxo-filter-row [visible]="true"></dxo-filter-row>
+      <dxo-search-panel [visible]="true"></dxo-search-panel>
+      <dxo-selection mode="single"></dxo-selection>
+      <dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+      <dxo-grouping
+        [allowCollapsing]="true"
+        [expandMode]="'rowClick'"
+        [contextMenuEnabled]="true"></dxo-grouping>
+      <dxo-group-panel [visible]="true"></dxo-group-panel>
+
+      <dxi-column dataField="invoiceNo" sortOrder="desc" caption="Invoice No" width="150"></dxi-column>
+      <dxi-column dataField="customerName" caption="Customer" width="200" [showWhenGrouped]="true"></dxi-column>
+      <dxi-column dataField="description" caption="Descr" width="200"></dxi-column>
+      <dxi-column dataField="invoiceDate" dataType="date" caption="InvDate" width="100" [showWhenGrouped]="true"></dxi-column>
+      <dxi-column dataField="dueDate" dataType="date" caption="DueDate" width="100" [showWhenGrouped]="true"></dxi-column>
+      <dxi-column dataField="lateDays" dataType="number" caption="lateDays" width="80"></dxi-column>
+      <dxi-column dataField="acc30" dataType="number" caption="-30" width="80"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
+      <dxi-column dataField="acc30-60" dataType="number" caption="30-60" width="80"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
+      <dxi-column dataField="acc60-90" dataType="number" caption="60-90" width="80"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
+      <dxi-column dataField="acc90" dataType="number" caption="90-" width="80"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
+      <dxi-column dataField="cur" caption="Cur" width="70" [showWhenGrouped]="true"></dxi-column>
+      <dxi-column dataField="lcy30" dataType="number" caption="-30 (LCY)" width="80"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
+      <dxi-column dataField="lcy3060" dataType="number" caption="30-60 (LCY)" width="80"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
+      <dxi-column dataField="lcy6090" dataType="number" caption="60-90 (LCY)" width="80"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
+      <dxi-column dataField="lcy90" dataType="number" caption="90- (LCY)" width="80"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
+    </dx-data-grid>
+  </div>
+</div>

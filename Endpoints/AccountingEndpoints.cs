@@ -382,24 +382,24 @@ where
 WITH EntryDetails AS (
     SELECT
         cle.[Entry No_] AS EntryNo,
-        cle.[Document No_] AS InvoiceNo,
-        cle.[Customer No_] AS CustomerNo,
-        cust.[Name] AS CustomerName,
-        CAST(cle.[Posting Date] AS DATE) AS InvoiceDate,
-        cle.[Description] AS Descr,
-        CAST(cle.[Due Date] AS DATE) AS DueDate,
+        cle.[Document No_] AS invoiceNo,
+        cle.[Customer No_] AS customerNo,
+        cust.[Name] AS customerName,
+        CAST(cle.[Posting Date] AS DATE) AS invoiceDate,
+        cle.[Description] AS descr,
+        CAST(cle.[Due Date] AS DATE) AS dueDate,
         CASE cle.[Currency Code]
             WHEN '' THEN '{DefCur}'
             ELSE cle.[Currency Code]
-        END AS Cur,
-        DATEDIFF(DAY, cle.[Due Date], GETDATE()) AS LateDays,
+        END AS cur,
+        DATEDIFF(DAY, cle.[Due Date], GETDATE()) AS lateDays,
         (
             SELECT SUM(Amount)
             FROM {context.dynDBName}.[{Company}$Detailed Cust_ Ledg_ Entry$437dbf0e-84ff-417a-965d-ed2bb9650972] dcle
             WHERE dcle.[Entry Type] = 1
               AND dcle.[Cust_ Ledger Entry No_] = cle.[Entry No_]
               AND dcle.[Posting Date] = cle.[Posting Date]
-        ) AS Amount,
+        ) AS amount,
 
         (
             SELECT SUM([Amount (LCY)])
@@ -407,7 +407,7 @@ WITH EntryDetails AS (
             WHERE dcle.[Entry Type] = 1
               AND dcle.[Cust_ Ledger Entry No_] = cle.[Entry No_]
               AND dcle.[Posting Date] = cle.[Posting Date]
-        ) AS AmountLCY
+        ) AS amountLCY
 
     FROM
         {context.dynDBName}.[{Company}$Cust_ Ledger Entry$437dbf0e-84ff-417a-965d-ed2bb9650972] cle
@@ -428,15 +428,15 @@ SELECT
     Cur,
     LateDays,
 
-    CASE WHEN LateDays < 30 THEN Amount ELSE NULL END AS [Acc30],
-    CASE WHEN LateDays BETWEEN 30 AND 60 THEN Amount ELSE NULL END AS [Acc3060],
-    CASE WHEN LateDays BETWEEN 61 AND 90 THEN Amount ELSE NULL END AS [Acc6090],
-	CASE WHEN LateDays > 90 THEN Amount ELSE NULL END AS [Acc90],
+    CASE WHEN lateDays < 30 THEN amount ELSE NULL END AS [acc30],
+    CASE WHEN lateDays BETWEEN 30 AND 60 THEN amount ELSE NULL END AS [acc3060],
+    CASE WHEN lateDays BETWEEN 61 AND 90 THEN amount ELSE NULL END AS [acc6090],
+	CASE WHEN lateDays > 90 THEN amount ELSE NULL END AS [acc90],
 
-	CASE WHEN LateDays < 30 THEN AmountLCY ELSE NULL END AS [LCY30],
-    CASE WHEN LateDays BETWEEN 30 AND 60 THEN AmountLCY ELSE NULL END AS [LCY3060],
-    CASE WHEN LateDays BETWEEN 61 AND 90 THEN AmountLCY ELSE NULL END AS [LCY6090],
-	CASE WHEN LateDays > 90 THEN AmountLCY ELSE NULL END AS [LCY90]
+	CASE WHEN lateDays < 30 THEN amountLCY ELSE NULL END AS [lcy30],
+    CASE WHEN lateDays BETWEEN 30 AND 60 THEN amountLCY ELSE NULL END AS [lcy3060],
+    CASE WHEN lateDays BETWEEN 61 AND 90 THEN amountLCY ELSE NULL END AS [lcy6090],
+	CASE WHEN lateDays > 90 THEN amountLCY ELSE NULL END AS [lcy90]
 FROM EntryDetails");
 
                 var lines = await conn.QueryAsync<CustAgedInvoices>(sql.ToString());

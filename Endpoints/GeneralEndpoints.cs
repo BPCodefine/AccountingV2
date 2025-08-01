@@ -8,10 +8,23 @@ namespace AccountingV2.Endpoints
         {
             app.MapGet("/api/username", (HttpContext context) =>
             {
-                var fullName = context.User.Identity?.Name;
-                var userName = fullName?.Split('\\').Last();
-                return Results.Ok(new {userName});
-            }).RequireAuthorization();
+                string userName;
+                var fullName = context.User?.Identity?.Name;
+#if DEBUG
+                userName = string.IsNullOrWhiteSpace(fullName)? "bp" : (fullName.Contains('\\') ? fullName.Split('\\').Last() : fullName);
+#else
+                if (string.IsNullOrWhiteSpace(fullName))
+                {
+                    return Results.Problem("Windows username could not be determined.", statusCode: 500);
+                }
+                userName = fullName.Contains('\\') ? fullName.Split('\\').Last() : fullName;
+#endif
+                return Results.Ok(new { userName });
+            })
+#if !DEBUG
+            .RequireAuthorization()
+#endif
+;
 
             app.MapGet("/api/dbtest", (DBAccess context) =>
             {

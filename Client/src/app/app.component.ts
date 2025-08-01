@@ -30,6 +30,7 @@ export class AppComponent {
     { icon: 'assignment', label: 'InvExpenses', route: 'InvExpenses' },
     { icon: 'account_balance', label: 'BankAccountLedger', route: 'BankAccountLedger' },
     { icon: 'receipt_long', label: 'CustInvoices', route: 'CustomerInvoices' },
+    { icon: 'request_quote', label: 'CustAgedInvoices', route: 'CustomerAgedInvoices' },
     { icon: 'description', label: 'VendorInvoices', route: 'VendorInvoices' }
   ];
 }

@@ -3,6 +3,7 @@ import { HomeComponent } from './Home/home.component';
 import { InvExpensesComponent } from './InvExpenses/InvExpenses.component';
 import { BankAccountLedgerComponent } from './BankAccountLedger/BankAccountLedger.component';
 import { CustomerInvoicesComponent } from './CustomerInvoices/CustomerInvoices.component';
+import { CustAgedInvoicesComponent } from './CustAgedInvoices/CustAgedInvoices.component';
 import { VendorInvoicesComponent } from './VendorInvoices/VendorInvoices.component';
 
 export const routes: Routes = [
@@ -11,6 +12,6 @@ export const routes: Routes = [
     { path: 'InvExpenses', component: InvExpensesComponent },
     { path: 'BankAccountLedger', component: BankAccountLedgerComponent},
     { path: 'CustomerInvoices', component: CustomerInvoicesComponent},
-
+    { path: 'CustomerAgedInvoices', component: CustAgedInvoicesComponent},
     { path: 'VendorInvoices', component: VendorInvoicesComponent}
 ]
