@@ -18,17 +18,8 @@
   gap: 1rem;
 }
 
-.filter-button {
-  white-space: nowrap;
+.showUSSales {
   margin-top: 8px;
-}
-
-.showUnpaid {
-  margin-top: 8px;
-}
-
-.PostingDate {
-    width: 300px;
 }
 
 .dx-fieldset {
@@ -47,11 +38,11 @@
   flex-direction: column;
 }
 
-::ng-deep .VendorInvDataGrid .dx-datagrid-search-panel {
+::ng-deep .HulkenGrid .dx-datagrid-search-panel {
   margin-right: 10px;
 }
 
-.VendorInvDataGrid {
+.HulkenGrid {
   height: 100%;
   display: flex;
   flex-direction: column;

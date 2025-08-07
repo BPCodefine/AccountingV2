@@ -1,10 +1,14 @@
 using AccountingV2.Endpoints;
+using Microsoft.Data.SqlClient;
+using System.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuthentication(Microsoft.AspNetCore.Server.IISIntegration.IISDefaults.AuthenticationScheme);
 builder.Services.AddAuthorization();
 builder.Services.AddSingleton<DBAccess>();
+builder.Services.AddScoped<IDbConnection>(sp =>
+    new SqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 #if DEBUG
 builder.Services.AddCors(options =>

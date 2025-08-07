@@ -2,7 +2,7 @@
 
 @Company=CDF
 @FromDate=2024-01-01
-@ToDate=2024-01-31
+@ToDate=2024-12-31
 @OnlyOpen=true
 @ExtraAccList=
 @invNo=PI00000930
@@ -46,5 +46,9 @@ GET {{AccountingV2_HostAddress}}/api/username
 ###
 
 GET {{AccountingV2_HostAddress}}/api/VendorInvoices?FromDate={{FromDate}}&ToDate={{ToDate}}&Company={{Company}}&OnlyOpen={{OnlyOpen}}
+
+###
+
+GET {{AccountingV2_HostAddress}}/api/HulkenInvoices?FromDate={{FromDate}}&ToDate={{ToDate}}&ShowUSSales=true
 
 ###

@@ -1,7 +1,12 @@
-import { Component, OnInit, HostListener, ChangeDetectorRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { DxSelectBoxModule, DxDataGridModule } from 'devextreme-angular';
+import { exportDataGrid } from 'devextreme-angular/common/export/excel';
+import { DxDataGridTypes } from 'devextreme-angular/ui/data-grid';
+
+import { Workbook } from 'exceljs';
+import { saveAs } from 'file-saver';
 
 import { CustAgedInvoices } from './CustAgedInvoices.model';
 import { CustAgedInvoiceService } from './CustAgedInvoices.service';
@@ -15,16 +20,15 @@ import { UserService } from '../GeneralData/WinUserName.service';
   templateUrl: './CustAgedInvoices.component.html',
   styleUrl: './CustAgedInvoices.component.css'
 })
-export class CustAgedInvoicesComponent implements OnInit, AfterViewInit {
+export class CustAgedInvoicesComponent implements OnInit {
 
   username = '';
   loading: boolean = true;
   enabledComps: string[] = [];
-  selectedComp!: string;
-  gridHeight: number = 0;
-  myStuff: CustAgedInvoices[] = [];
+  selectedComp!: string;;
+  invoices: CustAgedInvoices[] = [];
 
-  constructor(private userService: UserService, private custAgedInvoicesService: CustAgedInvoiceService, private cdr: ChangeDetectorRef) {}
+  constructor(private userService: UserService, private custAgedInvoicesService: CustAgedInvoiceService) {}
 
     ngOnInit(): void {
     this.userService.getUsername().subscribe({
@@ -51,25 +55,12 @@ export class CustAgedInvoicesComponent implements OnInit, AfterViewInit {
       }
     });
   }
-    ngAfterViewInit() {
-    this.calculateGridHeight();
-  }
-
-  @HostListener('window:resize')
-  onResize() {
-    this.calculateGridHeight();
-  }
-
-  calculateGridHeight() {
-    this.gridHeight = window.innerHeight - 120;
-    this.cdr.detectChanges();
-  }
 
   FetchInvoices() {
     this.loading = true;
     this.custAgedInvoicesService.getCustAgedInvoices(this.selectedComp).subscribe({
       next: (data) => {
-        this.myStuff = data;
+        this.invoices = data;
         this.loading = false;
       },
       error: err => {
@@ -78,4 +69,19 @@ export class CustAgedInvoicesComponent implements OnInit, AfterViewInit {
       }
     });
   }
+
+  onExporting(e: DxDataGridTypes.ExportingEvent) {
+      const workbook = new Workbook();
+      const worksheet = workbook.addWorksheet('Data');
+
+      exportDataGrid({
+        component: e.component,
+        worksheet,
+        autoFilterEnabled: true,
+      }).then(() => {
+        workbook.xlsx.writeBuffer().then((buffer) => {
+          saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'DataGrid.xlsx');
+        });
+      });
+    }
 }

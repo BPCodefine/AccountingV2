@@ -1,0 +1,125 @@
+<div class="dx-fieldset">
+  <div class="header-container">
+    <h2 class="page-header">Hulken Invoices</h2>
+    <div class="dx-field">
+      <div class="filter-container">
+        <dx-date-range-box
+          [min]="minDate"
+          [startDate]="startDate"
+          [endDate]="endDate"
+          startDateLabel="Posting Date Start"
+          endDateLabel="End"
+          [(value)]="currentValue"
+          (onValueChanged)="onCurrentValueChanged($event)">
+        </dx-date-range-box>
+
+        <dx-check-box
+          class="showUSSales"
+          [(value)]="showUSSales"
+          text="Show US Sales"
+          (onValueChanged)="FetchInvoices()">
+        </dx-check-box>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="loading" class="spinner">
+  Loading... Please wait
+</div>
+<div *ngIf="!loading">
+  <div #gridWrapper class="grid-wrapper">
+    <dx-data-grid class="HulkenGrid"
+      [dataSource]="invoices"
+      keyExpr="invoiceNo"
+      [allowColumnResizing]="true"
+      [showBorders]="true"
+      [columnAutoWidth]="false"
+      rowAutoHeight="true"
+      [allowColumnReordering]="true"
+      (onExporting)="onExporting($event)">
+
+      <dxo-scrolling mode="virtual"></dxo-scrolling>
+      <dxo-sorting mode="multiple"></dxo-sorting>
+      <dxo-selection mode="single"></dxo-selection>
+      <dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+      <dxo-grouping [contextMenuEnabled]="true"></dxo-grouping>
+      <dxo-group-panel [visible]="true"></dxo-group-panel>
+      <dxo-search-panel [visible]="true" width="240" placeholder="Search"></dxo-search-panel>
+      <dxo-export [enabled]="true"></dxo-export>
+
+      <dxo-summary>
+        <dxi-group-item
+            column="Quantity"
+            summaryType="sum"
+            [showInGroupFooter]="true"
+            valueFormat="fixedPoint"
+            precision="0"
+            displayFormat="{0}">
+        </dxi-group-item>
+        <dxi-group-item
+            column="Quantity"
+            summaryType="sum"
+            valueFormat="fixedPoint"
+            precision="0"
+            displayFormat="Quantity: {0}">
+        </dxi-group-item>
+        <dxi-group-item
+            column="Amount"
+            summaryType="sum"
+            [showInGroupFooter]="true"
+            valueFormat="fixedPoint"
+            precision="2"
+            displayFormat="{0}">
+        </dxi-group-item>
+        <dxi-group-item
+            column="Amount"
+            summaryType="sum"
+            valueFormat="fixedPoint"
+            precision="2"
+            displayFormat="Amount: {0}">
+        </dxi-group-item>
+        <dxi-total-item
+            column="Quantity"
+            summaryType="sum"
+            showInColumn="Quantity"
+            valueFormat="fixedPoint"
+            precision="0"
+            displayFormat="{0}">
+        </dxi-total-item>
+        <dxi-total-item
+            column="Amount"
+            summaryType="sum"
+            showInColumn="Amount"
+            valueFormat="fixedPoint"
+            precision="2"
+            displayFormat="{0}">
+        </dxi-total-item>
+      </dxo-summary>
+
+      <dxi-column dataField="invoiceNo" caption="Invoice No" width="130"></dxi-column>
+      <dxi-column dataField="customer" caption="Customer" width="180" [showWhenGrouped]="true"></dxi-column>
+      <dxi-column dataField="custCountry" caption="Customer Country" width="50" [showWhenGrouped]="true"></dxi-column>
+      <dxi-column dataField="invCustomer" caption="Invoice Customer" [visible]="false"></dxi-column>
+      <dxi-column dataField="invCustCountry" caption="Invoice Country" [visible]="false"></dxi-column>
+
+      <dxi-column dataField="invDate" caption="Invoice Date" dataType="date" format="shortDate" width="100" [showWhenGrouped]="true"></dxi-column>
+
+      <dxi-column dataField="entryType" caption="Entry Type" width="80" [showWhenGrouped]="true"></dxi-column>
+      <dxi-column dataField="articleNo" caption="Article No" width="100" [showWhenGrouped]="true"></dxi-column>
+      <dxi-column dataField="itemCat" caption="Item Category" [visible]="false"></dxi-column>
+      <dxi-column dataField="article" caption="Article" width="230" [showWhenGrouped]="true"></dxi-column>
+
+      <dxi-column dataField="quantity" caption="Quantity" dataType="number" format="#,##0." width="70"></dxi-column>
+      <dxi-column dataField="unitPrice" caption="Unit Price" dataType="number" format="#,##0.00" width="100"></dxi-column>
+      <dxi-column dataField="cur" caption="Currency" width="50" [showWhenGrouped]="true"></dxi-column>
+      <dxi-column dataField="amount" caption="Amount" dataType="number" format="#,##0.00" width="100"></dxi-column>
+
+      <dxi-column dataField="size" caption="Size" width="80" [showWhenGrouped]="true"></dxi-column>
+      <dxi-column dataField="color" caption="Color" width="110" [showWhenGrouped]="true"></dxi-column>
+      <dxi-column dataField="rem" caption="Remark" width="150" [showWhenGrouped]="true"></dxi-column>
+      <dxi-column dataField="bagType" caption="Bag Type" width="150" [showWhenGrouped]="true"></dxi-column>
+      <dxi-column dataField="bagVersion" caption="Bag Version" width="80" [showWhenGrouped]="true"></dxi-column>
+    </dx-data-grid>
+    </div>
+</div>

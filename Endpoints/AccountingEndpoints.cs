@@ -28,6 +28,12 @@ namespace AccountingV2.Endpoints
         public DateTime ToDate { get; set; }
         public bool? OnlyOpen { get; set; } = false;
     }
+    public class HulkenQuery
+    {
+        public DateTime FromDate { get; set; }
+        public DateTime ToDate { get; set; }
+        public bool showUSSales { get; set; }
+    }
     public static class AccountingEndpoints
     {
         public static string GetDefaultCurrency(string company, string comp, IDbConnection c)
@@ -143,35 +149,33 @@ from
 ";
             const string OrderBy = "order by InvCTE.PostingDate, InvCTE.InvoiceNo, InvCTE.InvLineNo";
 
-            app.MapGet("/api/PurchInvAndExpenses", async (DBAccess context) =>
+            app.MapGet("/api/PurchInvAndExpenses", async (IDbConnection c, DBAccess context) =>
             {
                 try
                 {
-                    using var conn = context.Create();
-                    var lines = await conn.QueryAsync<PIAndExpenses>(sqlPurchInvoicesAndExpenses.Replace("{DBName}", context.dynDBName));
+                    var lines = await c.QueryAsync<PIAndExpenses>(sqlPurchInvoicesAndExpenses.Replace("{DBName}", context.dynDBName));
                     return Results.Ok(lines);
                 }
                 catch (Exception ex)
                 {
-                    return Results.Problem(context.connString + "; " + ex.Message, statusCode: 500);
+                    return Results.Problem(ex.Message, statusCode: 500);
                 }
             }
             );
 
-            app.MapGet("/api/PurchInvAndExpenses/betweenDates", async (DBAccess context, [AsParameters] DateInterval betweenDates) =>
+            app.MapGet("/api/PurchInvAndExpenses/betweenDates", async (IDbConnection c, DBAccess context, [AsParameters] DateInterval betweenDates) =>
             {
                 StringBuilder sqlWithInvNo = new(sqlPurchInvoicesAndExpenses);
                 sqlWithInvNo.Replace("{DBName}", context.dynDBName);
                 sqlWithInvNo.AppendLine($"where InvCTE.PostingDate between '{betweenDates.FromDate}' and '{betweenDates.ToDate}'");
                 sqlWithInvNo.AppendLine(OrderBy);
 
-                using var conn = context.Create();
-                var lines = await conn.QueryAsync<PIAndExpenses>(sqlWithInvNo.ToString());
+                var lines = await c.QueryAsync<PIAndExpenses>(sqlWithInvNo.ToString());
                 return Results.Ok(lines);
             }
             );
 
-            app.MapGet("/api/BankAccountLedgerItems", async (DBAccess context, [AsParameters] LedgerQuery query) =>
+            app.MapGet("/api/BankAccountLedgerItems", async (IDbConnection c, DBAccess context, [AsParameters] LedgerQuery query) =>
             {
                 StringBuilder sqlBankAccountLedgerEntries = new($@"
 select
@@ -201,22 +205,21 @@ where
 order by
     [Posting Date] Desc
 ");
-                using var conn = context.Create();
+
                 sqlBankAccountLedgerEntries.Replace("@toDate", query.ToDate.ToString("yyyy/MM/dd"));
                 sqlBankAccountLedgerEntries.Replace("@MoreAccntList", (query.ExtraAccList?.Length ?? 0) == 0 ? "" : ", " + query.ExtraAccList);
-                var lines = await conn.QueryAsync<BankAccountLedgerEntries>(sqlBankAccountLedgerEntries.ToString());
+                var lines = await c.QueryAsync<BankAccountLedgerEntries>(sqlBankAccountLedgerEntries.ToString());
                 return Results.Ok(lines);
 
             }
             );
 
-            app.MapGet("/api/CustomerInvoices", async (DBAccess context, [AsParameters] CustInvQuery query) =>
+            app.MapGet("/api/CustomerInvoices", async (IDbConnection c, DBAccess context, [AsParameters] CustInvQuery query) =>
             {
-                using var conn = context.Create();
                 string DefCur;
                 try
                 {
-                    DefCur = GetDefaultCurrency(query.Company, context.dynDBName, conn);
+                    DefCur = GetDefaultCurrency(query.Company, context.dynDBName, c);
                 }
                 catch (InvalidOperationException ex)
                 {
@@ -254,18 +257,17 @@ where
     cle.[Posting Date] BETWEEN '{query.FromDate:yyyy-MM-dd}' AND '{query.ToDate:yyyy-MM-dd}'
     AND cle.[Document Type] = 2");
 
-                var lines = await conn.QueryAsync<CustomerInvoices>(sql.ToString());
+                var lines = await c.QueryAsync<CustomerInvoices>(sql.ToString());
                 return Results.Ok(lines);
             }
             );
 
-            app.MapGet("/api/LateCustomerInvoices", async (DBAccess context, string Company) =>
+            app.MapGet("/api/LateCustomerInvoices", async (IDbConnection c, DBAccess context, string Company) =>
             {
-                using var conn = context.Create();
                 string DefCur;
                 try
                 {
-                    DefCur = GetDefaultCurrency(Company, context.dynDBName, conn);
+                    DefCur = GetDefaultCurrency(Company, context.dynDBName, c);
                 }
                 catch (InvalidOperationException ex)
                 {
@@ -300,18 +302,17 @@ where
 	[Open] = 1
 	and (cle.[Document Type] = 2 OR cle.[Document Type] = 3)");
 
-                var lines = await conn.QueryAsync<CustomerInvoices>(sql.ToString());
+                var lines = await c.QueryAsync<CustomerInvoices>(sql.ToString());
                 return Results.Ok(lines);
             }
             );
 
-            app.MapGet("/api/VendorInvoices", async (DBAccess context, [AsParameters] VendorInvQuery query) =>
+            app.MapGet("/api/VendorInvoices", async (IDbConnection c, DBAccess context, [AsParameters] VendorInvQuery query) =>
             {
-                using var conn = context.Create();
                 string DefCur;
                 try
                 {
-                    DefCur = GetDefaultCurrency(query.Company, context.dynDBName, conn);
+                    DefCur = GetDefaultCurrency(query.Company, context.dynDBName, c);
                 }
                 catch (InvalidOperationException ex)
                 {
@@ -352,26 +353,24 @@ where
                 if (query.OnlyOpen.HasValue && query.OnlyOpen.Value)
                     sql.AppendLine("AND vle.[Open] = 1");
 
-                var lines = await conn.QueryAsync<VendorInvoices>(sql.ToString());
+                var lines = await c.QueryAsync<VendorInvoices>(sql.ToString());
                 return Results.Ok(lines);
             }
             );
 
-            app.MapGet("/api/GetEnabledComps", async (DBAccess context, string UserName) =>
+            app.MapGet("/api/GetEnabledComps", async (IDbConnection c, DBAccess context, string UserName) =>
             {
-                using var conn = context.Create();
                 string sql = $"select [AccessTo] from [SatV2].[Webpages].[WebUserRights] where [UserName] = '{UserName}'";
-                var lines = await conn.QueryAsync<string>(sql);
+                var lines = await c.QueryAsync<string>(sql);
                 return Results.Ok(lines);
             });
 
-            app.MapGet("/api/CustAgedInvoices", async (DBAccess context, string Company) =>
+            app.MapGet("/api/CustAgedInvoices", async (IDbConnection c, DBAccess context, string Company) =>
             {
-                using var conn = context.Create();
                 string DefCur;
                 try
                 {
-                    DefCur = GetDefaultCurrency(Company, context.dynDBName, conn);
+                    DefCur = GetDefaultCurrency(Company, context.dynDBName, c);
                 }
                 catch (InvalidOperationException ex)
                 {
@@ -439,10 +438,115 @@ SELECT
 	CASE WHEN lateDays > 90 THEN amountLCY ELSE NULL END AS [lcy90]
 FROM EntryDetails");
 
-                var lines = await conn.QueryAsync<CustAgedInvoices>(sql.ToString());
+                var lines = await c.QueryAsync<CustAgedInvoices>(sql.ToString());
                 return Results.Ok(lines);
             }
             );
+
+            app.MapGet("/api/HulkenInvoices", async (IDbConnection c, DBAccess context, [AsParameters] HulkenQuery hulkenQuery) =>
+            {
+                string DefCur;
+                try
+                {
+                    DefCur = GetDefaultCurrency("CDF", context.dynDBName, c);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    return Results.Problem(ex.Message, statusCode: 500);
+                }
+
+                StringBuilder sql = new($@"
+SELECT 
+    sh.[No_] as InvoiceNo,
+    sh.[Sell-to Customer Name] as Customer,
+    sh.[Sell-to Country_Region Code] as CustCountry,
+    sh.[Bill-to Name] as InvCustomer,
+    sh.[Bill-to Country_Region Code] as InvCustCountry,
+    sh.[Posting Date] as InvDate,
+    CASE sl.[Type]
+		WHEN 1 THEN 'Discount'
+		WHEN 2 THEN 'Invoice'
+		ELSE CAST(sl.[Type] as varchar)
+	END as [EntryType],
+    sl.[No_] AS ArticleNo,
+    sl.[Item Category Code] as ItemCat,
+    sl.[Description] as Article,
+	Art.strSize as Size,
+	Art.strColor as Color,
+	Art.strRemark as Rem,
+	Art.strBagType as BagType,
+	Art.strBagtypeVersion as BagVersion,
+    sl.Quantity,
+    sl.[Unit Price] as UnitPrice,
+    CASE sh.[Currency Code]
+		WHEN '' THEN 'EUR'
+		ELSE sh.[Currency Code]
+	END as Cur,
+    sl.[Amount]
+FROM 
+    {context.dynDBName}.[CDF$Sales Invoice Header$437dbf0e-84ff-417a-965d-ed2bb9650972] sh
+	INNER JOIN {context.dynDBName}.[CDF$Sales Invoice Line$437dbf0e-84ff-417a-965d-ed2bb9650972] sl ON sh.[No_] = sl.[Document No_]
+	LEFT OUTER JOIN Codefine.dbo.PRODUCT_K Art on LEFT(sl.[No_], LEN(sl.[No_]) - 4) = CAST(Art.[ARTICLE_NUMBER] as varchar)
+WHERE 
+    EXISTS (
+        SELECT 1
+        FROM {context.dynDBName}.[CDF$Sales Invoice Line$437dbf0e-84ff-417a-965d-ed2bb9650972] sub
+        WHERE 
+            sub.[Document No_] = sh.[No_]
+            AND sub.[Item Category Code] = 'HULKEN')
+    AND sl.[Type] <> 0 
+    AND sh.[Posting Date] BETWEEN '{hulkenQuery.FromDate:yyyy-MM-dd}' AND '{hulkenQuery.ToDate:yyyy-MM-dd}'
+    {(hulkenQuery.showUSSales ? "": "AND sh.[Sell-to Customer Name] not like 'Hulken Inc.%'")}
+UNION  
+
+select 
+	ch.[No_] as InvoiceNo,
+    ch.[Sell-to Customer Name],
+    ch.[Sell-to Country_Region Code],
+    ch.[Bill-to Name],
+    ch.[Bill-to Country_Region Code],
+    ch.[Posting Date],
+    CASE cl.[Type]
+		WHEN 1 THEN 'CR Discount'
+		WHEN 2 THEN 'CR Invoice'
+		ELSE CAST(cl.[Type] as varchar)
+	END as [EntryType],
+    cl.[No_] AS ArticleNo,
+    cl.[Item Category Code],
+    cl.[Description],
+	Art.strSize as Size,
+	Art.strColor as Color,
+	Art.strRemark as Rem,
+	Art.strBagType as BagType,
+	Art.strBagtypeVersion as BagVersion,
+    cl.Quantity * -1,
+    cl.[Unit Price] * -1,
+    CASE ch.[Currency Code]
+		WHEN '' THEN 'EUR'
+		ELSE ch.[Currency Code]
+	END as Cur,
+    cl.[Amount] * -1
+from 
+	{context.dynDBName}.[CDF$Sales Cr_Memo Header$437dbf0e-84ff-417a-965d-ed2bb9650972] ch
+	inner join {context.dynDBName}.[CDF$Sales Cr_Memo Line$437dbf0e-84ff-417a-965d-ed2bb9650972] cl on ch.No_ = cl.[Document No_]
+	LEFT OUTER JOIN Codefine.dbo.PRODUCT_K Art on LEFT(cl.[No_], LEN(cl.[No_]) - 4) = CAST(Art.[ARTICLE_NUMBER] as varchar)
+where 
+	EXISTS (
+        SELECT 1
+        FROM {context.dynDBName}.[CDF$Sales Cr_Memo Line$437dbf0e-84ff-417a-965d-ed2bb9650972] sub
+        WHERE 
+            sub.[Document No_] = ch.[No_]
+            AND sub.[Item Category Code] = 'HULKEN')
+	and cl.[Type] <> 0 
+    AND ch.[Posting Date] BETWEEN '{hulkenQuery.FromDate:yyyy-MM-dd}' AND '{hulkenQuery.ToDate:yyyy-MM-dd}'
+    {(hulkenQuery.showUSSales ? "": "AND ch.[Sell-to Customer Name] not like 'Hulken Inc.%'")}
+
+order by Customer
+");
+
+                var lines = await c.QueryAsync<HulkenInvoices>(sql.ToString());
+                return Results.Ok(lines);
+            });
         }
     }
 }

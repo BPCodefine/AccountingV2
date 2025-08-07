@@ -1,8 +1,13 @@
-import { Component, OnInit, HostListener, ChangeDetectorRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { DxSelectBoxModule, DxDateRangeBoxModule, DxCheckBoxModule, DxDataGridModule } from 'devextreme-angular';
 import { DxDateRangeBoxTypes } from "devextreme-angular/ui/date-range-box"
+import { exportDataGrid } from 'devextreme-angular/common/export/excel';
+import { DxDataGridTypes } from 'devextreme-angular/ui/data-grid';
+
+import { Workbook } from 'exceljs';
+import { saveAs } from 'file-saver';
 
 import { VendorInvoices } from './VendorInvoices.model';
 import { VendorInvoicesService } from './VendorInvoices.service';
@@ -18,7 +23,7 @@ import { UserService } from '../GeneralData/WinUserName.service';
   templateUrl: 'VendorInvoices.component.html',
   styleUrl: 'VendorInvoices.component.css'
 })
-export class VendorInvoicesComponent implements OnInit, AfterViewInit {
+export class VendorInvoicesComponent implements OnInit {
   username = '';
   loading: boolean = true;
 
@@ -26,14 +31,13 @@ export class VendorInvoicesComponent implements OnInit, AfterViewInit {
   startDate: Date = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
   endDate: Date = new Date();
   currentValue: [Date, Date] = [this.startDate, this.endDate];
-  gridHeight: number = 0;
   showUnpaid: boolean = false;
 
   invoices: VendorInvoices[] = [];
   enabledComps: string[] = [];
   selectedComp!: string;
 
-  constructor(private userService: UserService, private vendorInvoicesService: VendorInvoicesService, private cdr: ChangeDetectorRef) {}
+  constructor(private userService: UserService, private vendorInvoicesService: VendorInvoicesService) {}
 
   ngOnInit(): void {
     this.userService.getUsername().subscribe({
@@ -59,20 +63,6 @@ export class VendorInvoicesComponent implements OnInit, AfterViewInit {
         this.username = 'Unknown User';
       }
     });
-  }
-
-  ngAfterViewInit() {
-    this.calculateGridHeight();
-  }
-
-  @HostListener('window:resize')
-  onResize() {
-    this.calculateGridHeight();
-  }
-
-  calculateGridHeight() {
-    this.gridHeight = window.innerHeight - 120;
-    this.cdr.detectChanges();
   }
 
   onCurrentValueChanged(e: DxDateRangeBoxTypes.ValueChangedEvent) {
@@ -102,4 +92,19 @@ export class VendorInvoicesComponent implements OnInit, AfterViewInit {
       }
     });
   }
+
+  onExporting(e: DxDataGridTypes.ExportingEvent) {
+      const workbook = new Workbook();
+      const worksheet = workbook.addWorksheet('Data');
+
+      exportDataGrid({
+        component: e.component,
+        worksheet,
+        autoFilterEnabled: true,
+      }).then(() => {
+        workbook.xlsx.writeBuffer().then((buffer) => {
+          saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'DataGrid.xlsx');
+        });
+      });
+    }
 }

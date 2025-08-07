@@ -1,6 +1,6 @@
 <div class="dx-fieldset">
   <div class="header-container">
-    <h2 class="page-header">Customer Invoices</h2>
+    <h2 class="page-header">Customer Aged Invoices</h2>
     <div class="dx-field">
       <div class="filter-container">
         <dx-select-box
@@ -20,31 +20,123 @@
 </div>
 <div *ngIf="!loading">
   <div #gridWrapper class="grid-wrapper">
-    <dx-data-grid id="CustAgedInvoicesDataGrid"
-      [dataSource]="myStuff"
+    <dx-data-grid class="CustAgedGrid"
+      [dataSource]="invoices"
       keyExpr="invoiceNo"
       [allowColumnResizing]="true"
-      [columnAutoWidth]="false"
-      [allowColumnReordering]="true"
       [showBorders]="true"
-      [height]="gridHeight"
-      [columnHidingEnabled]="false"
-      >
+      [columnAutoWidth]="false"
+      rowAutoHeight="true"
+      [allowColumnReordering]="true"
+      (onExporting)="onExporting($event)">
 
-      <dxo-scrolling
-        mode="Infinite"
-        [useNative]="true"
-        showScrollbar="always">
-      </dxo-scrolling>
-      <dxo-filter-row [visible]="true"></dxo-filter-row>
-      <dxo-search-panel [visible]="true"></dxo-search-panel>
+      <dxo-scrolling mode="virtual"></dxo-scrolling>
+      <dxo-sorting mode="multiple"></dxo-sorting>
       <dxo-selection mode="single"></dxo-selection>
       <dxo-column-fixing [enabled]="true"></dxo-column-fixing>
-      <dxo-grouping
-        [allowCollapsing]="true"
-        [expandMode]="'rowClick'"
-        [contextMenuEnabled]="true"></dxo-grouping>
+      <dxo-grouping [contextMenuEnabled]="true"></dxo-grouping>
       <dxo-group-panel [visible]="true"></dxo-group-panel>
+      <dxo-search-panel [visible]="true" width="240" placeholder="Search"></dxo-search-panel>
+      <dxo-export [enabled]="true"></dxo-export>
+
+      <dxo-summary>
+        <dxi-group-item
+            column="acc30"
+            summaryType="sum"
+            [showInGroupFooter]="true"
+            valueFormat="fixedPoint"
+            precision="2"
+            displayFormat="{0}">
+        </dxi-group-item>
+        <dxi-group-item
+            column="acc3060"
+            summaryType="sum"
+            [showInGroupFooter]="true"
+            valueFormat="fixedPoint"
+            precision="2"
+            displayFormat="{0}">
+        </dxi-group-item>
+        <dxi-group-item
+            column="acc6090"
+            summaryType="sum"
+            [showInGroupFooter]="true"
+            valueFormat="fixedPoint"
+            precision="2"
+            displayFormat="{0}">
+        </dxi-group-item>
+        <dxi-group-item
+            column="acc90"
+            summaryType="sum"
+            [showInGroupFooter]="true"
+            valueFormat="fixedPoint"
+            precision="2"
+            displayFormat="{0}">
+        </dxi-group-item>
+        <dxi-group-item
+            column="lcy30"
+            summaryType="sum"
+            [showInGroupFooter]="true"
+            valueFormat="fixedPoint"
+            precision="2"
+            displayFormat="{0}">
+        </dxi-group-item>
+        <dxi-group-item
+            column="lcy3060"
+            summaryType="sum"
+            [showInGroupFooter]="true"
+            valueFormat="fixedPoint"
+            precision="2"
+            displayFormat="{0}">
+        </dxi-group-item>
+        <dxi-group-item
+            column="lcy6090"
+            summaryType="sum"
+            [showInGroupFooter]="true"
+            valueFormat="fixedPoint"
+            precision="2"
+            displayFormat="{0}">
+        </dxi-group-item>
+        <dxi-group-item
+            column="lcy90"
+            summaryType="sum"
+            [showInGroupFooter]="true"
+            valueFormat="fixedPoint"
+            precision="2"
+            displayFormat="{0}">
+        </dxi-group-item>
+        <dxi-total-item
+            column="lcy30"
+            summaryType="sum"
+            showInColumn="lcy30"
+            valueFormat="fixedPoint"
+            precision="2"
+            displayFormat="{0}">
+        </dxi-total-item>
+        <dxi-total-item
+            column="lcy3060"
+            summaryType="sum"
+            showInColumn="lcy3060"
+            valueFormat="fixedPoint"
+            precision="2"
+            displayFormat="{0}">
+        </dxi-total-item>
+        <dxi-total-item
+            column="lcy6090"
+            summaryType="sum"
+            showInColumn="lcy6090"
+            valueFormat="fixedPoint"
+            precision="2"
+            displayFormat="{0}">
+        </dxi-total-item>
+        <dxi-total-item
+            column="lcy90"
+            summaryType="sum"
+            showInColumn="lcy90"
+            valueFormat="fixedPoint"
+            precision="2"
+            displayFormat="{0}">
+        </dxi-total-item>
+      </dxo-summary>
 
       <dxi-column dataField="invoiceNo" sortOrder="desc" caption="Invoice No" width="150"></dxi-column>
       <dxi-column dataField="customerName" caption="Customer" width="200" [showWhenGrouped]="true"></dxi-column>
@@ -53,8 +145,8 @@
       <dxi-column dataField="dueDate" dataType="date" caption="DueDate" width="100" [showWhenGrouped]="true"></dxi-column>
       <dxi-column dataField="lateDays" dataType="number" caption="lateDays" width="80"></dxi-column>
       <dxi-column dataField="acc30" dataType="number" caption="-30" width="80"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
-      <dxi-column dataField="acc30-60" dataType="number" caption="30-60" width="80"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
-      <dxi-column dataField="acc60-90" dataType="number" caption="60-90" width="80"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
+      <dxi-column dataField="acc3060" dataType="number" caption="30-60" width="80"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
+      <dxi-column dataField="acc6090" dataType="number" caption="60-90" width="80"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
       <dxi-column dataField="acc90" dataType="number" caption="90-" width="80"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
       <dxi-column dataField="cur" caption="Cur" width="70" [showWhenGrouped]="true"></dxi-column>
       <dxi-column dataField="lcy30" dataType="number" caption="-30 (LCY)" width="80"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>

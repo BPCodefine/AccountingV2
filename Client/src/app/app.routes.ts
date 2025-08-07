@@ -1,3 +1,4 @@
+import { Component } from '@angular/core';
 import { Routes } from '@angular/router';
 import { HomeComponent } from './Home/home.component';
 import { InvExpensesComponent } from './InvExpenses/InvExpenses.component';
@@ -5,6 +6,7 @@ import { BankAccountLedgerComponent } from './BankAccountLedger/BankAccountLedge
 import { CustomerInvoicesComponent } from './CustomerInvoices/CustomerInvoices.component';
 import { CustAgedInvoicesComponent } from './CustAgedInvoices/CustAgedInvoices.component';
 import { VendorInvoicesComponent } from './VendorInvoices/VendorInvoices.component';
+import { HulkenInvoicesComponent } from './HulkenInvoices/HulkenInvoices.component';
 
 export const routes: Routes = [
     { path: '', pathMatch: 'full', redirectTo: 'home' },
@@ -13,5 +15,6 @@ export const routes: Routes = [
     { path: 'BankAccountLedger', component: BankAccountLedgerComponent},
     { path: 'CustomerInvoices', component: CustomerInvoicesComponent},
     { path: 'CustomerAgedInvoices', component: CustAgedInvoicesComponent},
-    { path: 'VendorInvoices', component: VendorInvoicesComponent}
+    { path: 'VendorInvoices', component: VendorInvoicesComponent},
+    { path: 'HulkenInvoices', component: HulkenInvoicesComponent }
 ]

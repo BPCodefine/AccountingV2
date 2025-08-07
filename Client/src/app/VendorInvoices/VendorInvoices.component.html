@@ -37,39 +37,80 @@
 </div>
 <div *ngIf="!loading">
   <div #gridWrapper class="grid-wrapper">
-    <dx-data-grid id="CustInvoicesDataGrid"
+    <dx-data-grid class="VendorInvDataGrid"
       [dataSource]="invoices"
+      keyExpr="invoiceNo"
       [allowColumnResizing]="true"
-      [columnAutoWidth]="false"
-      [allowColumnReordering]="true"
       [showBorders]="true"
-      [height]="gridHeight"
-      [columnHidingEnabled]="false"
-      keyExpr="invoiceNo">
+      [columnAutoWidth]="false"
+      rowAutoHeight="true"
+      [allowColumnReordering]="true"
 
-      <dxo-scrolling
-        mode="infinite"
-        [useNative]="true"
-        showScrollbar="always">
-      </dxo-scrolling>
-      <dxo-filter-row [visible]="true"></dxo-filter-row>
-      <dxo-search-panel [visible]="true"></dxo-search-panel>
+      (onExporting)="onExporting($event)">
+
+      <dxo-scrolling mode="virtual"></dxo-scrolling>
+      <dxo-sorting mode="multiple"></dxo-sorting>
       <dxo-selection mode="single"></dxo-selection>
       <dxo-column-fixing [enabled]="true"></dxo-column-fixing>
       <dxo-grouping [contextMenuEnabled]="true"></dxo-grouping>
       <dxo-group-panel [visible]="true"></dxo-group-panel>
+      <dxo-search-panel [visible]="true" width="240" placeholder="Search"></dxo-search-panel>
+
+      <dxo-summary>
+        <dxi-group-item
+            column="amount"
+            summaryType="sum"
+            [showInGroupFooter]="true"
+            valueFormat="fixedPoint"
+            precision="2"
+            displayFormat="{0}">
+        </dxi-group-item>
+        <dxi-group-item
+            column="amount"
+            summaryType="sum"
+            valueFormat="fixedPoint"
+            precision="2"
+            displayFormat="Amount: {0}">
+        </dxi-group-item>
+
+        <dxi-group-item
+            column="amountLCY"
+            summaryType="sum"
+            [showInGroupFooter]="true"
+            valueFormat="fixedPoint"
+            precision="2"
+            displayFormat="{0}">
+        </dxi-group-item>
+        <dxi-group-item
+            column="amountLCY"
+            summaryType="sum"
+            valueFormat="fixedPoint"
+            precision="2"
+            displayFormat="Amount LCY: {0}">
+        </dxi-group-item>
+        <dxi-total-item
+            column="amountLCY"
+            summaryType="sum"
+            showInColumn="amountLCY"
+            valueFormat="fixedPoint"
+            precision="2"
+            displayFormat="{0}">
+        </dxi-total-item>
+      </dxo-summary>
+
+      <dxo-export [enabled]="true"></dxo-export>
 
       <dxi-column dataField="invoiceNo" [fixed]="true" sortOrder="desc" caption="Invoice No" width="150"></dxi-column>
-      <dxi-column dataField="vendorName" caption="Vendor" width="200"></dxi-column>
-      <dxi-column dataField="description" caption="Descr" width="200"></dxi-column>
+      <dxi-column dataField="vendorName" caption="Vendor" width="200" [showWhenGrouped]="true"></dxi-column>
+      <dxi-column dataField="description" caption="Descr" width="200" [showWhenGrouped]="true"></dxi-column>
       <dxi-column dataField="extInvNo" caption="ExtInvNo" width="150"></dxi-column>
-      <dxi-column dataField="invoiceDate" dataType="date" caption="InvDate" width="100"></dxi-column>
-      <dxi-column dataField="dueDate" dataType="date" caption="DueDate" width="100"></dxi-column>
-      <dxi-column dataField="amount" dataType="number" caption="Amount" width="80"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
-      <dxi-column dataField="cur" caption="Cur" width="70"></dxi-column>
-      <dxi-column dataField="amountLCY" dataType="number" caption="Amount(LCY)" width="80"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
-      <dxi-column dataField="paymentDate"  dataType="date" caption="PaymentDate" width="100"></dxi-column>
-      <dxi-column dataField="paymentDocNo" caption="PaymentDocNo" width="100"></dxi-column>
+      <dxi-column dataField="invoiceDate" dataType="date" caption="InvDate" width="100" [showWhenGrouped]="true"></dxi-column>
+      <dxi-column dataField="dueDate" dataType="date" caption="DueDate" width="100" [showWhenGrouped]="true"></dxi-column>
+      <dxi-column dataField="amount" dataType="number" caption="Amount" width="100"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
+      <dxi-column dataField="cur" caption="Cur" width="70" [showWhenGrouped]="true"></dxi-column>
+      <dxi-column dataField="amountLCY" dataType="number" caption="Amount(LCY)" width="120"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
+      <dxi-column dataField="paymentDate"  dataType="date" caption="PaymentDate" width="100" [showWhenGrouped]="true"></dxi-column>
+      <dxi-column dataField="paymentDocNo" caption="PaymentDocNo" width="100" [showWhenGrouped]="true"></dxi-column>
     </dx-data-grid>
   </div>
 </div>
