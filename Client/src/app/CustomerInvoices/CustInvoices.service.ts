@@ -11,9 +11,9 @@ export class CustInvoiceService {
 
   constructor(private httpClient: HttpClient) {}
 
-  getCustInvoices(fromDate: Date, toDate: Date = new Date(), Company: string): Observable<CustInvoices[]> {
+  getCustInvoices(fromDate: string, toDate: string, Company: string): Observable<CustInvoices[]> {
     return this.httpClient.get<CustInvoices[]>(environment.apiUrl + '/api/CustomerInvoices' +
-      `?FromDate=${fromDate.toISOString().split('T')[0]}&ToDate=${toDate.toISOString().split('T')[0]}&Company=${Company}`);
+      `?FromDate=${fromDate}&ToDate=${toDate}&Company=${Company}`);
     }
 
   getLateCustInvoices(Company: string): Observable<CustInvoices[]> {

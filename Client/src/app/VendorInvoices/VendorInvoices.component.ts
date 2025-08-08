@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 
 import { DxSelectBoxModule, DxDateRangeBoxModule, DxCheckBoxModule, DxDataGridModule } from 'devextreme-angular';
 import { DxDateRangeBoxTypes } from "devextreme-angular/ui/date-range-box"
@@ -20,6 +20,7 @@ import { UserService } from '../GeneralData/WinUserName.service';
             DxDataGridModule,
             DxCheckBoxModule,
             DxDateRangeBoxModule],
+  providers: [DatePipe],
   templateUrl: 'VendorInvoices.component.html',
   styleUrl: 'VendorInvoices.component.css'
 })
@@ -30,6 +31,8 @@ export class VendorInvoicesComponent implements OnInit {
   minDate: Date = new Date(2020, 7, 1);
   startDate: Date = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
   endDate: Date = new Date();
+  strStartDate: string = '';
+  strEndDate: string = '';
   currentValue: [Date, Date] = [this.startDate, this.endDate];
   showUnpaid: boolean = false;
 
@@ -37,7 +40,7 @@ export class VendorInvoicesComponent implements OnInit {
   enabledComps: string[] = [];
   selectedComp!: string;
 
-  constructor(private userService: UserService, private vendorInvoicesService: VendorInvoicesService) {}
+  constructor(private datePipe: DatePipe, private userService: UserService, private vendorInvoicesService: VendorInvoicesService) {}
 
   ngOnInit(): void {
     this.userService.getUsername().subscribe({
@@ -74,9 +77,12 @@ export class VendorInvoicesComponent implements OnInit {
   FetchInvoices(): void {
     this.loading = true;
 
+    this.strStartDate = this.datePipe.transform(this.startDate, 'yyyy-MM-dd')!;
+    this.strEndDate = this.datePipe.transform(this.endDate, 'yyyy-MM-dd')!;
+
     const invoiceObservable = this.showUnpaid
-      ? this.vendorInvoicesService.getUnpaidVendorInvoices(this.startDate, this.endDate, this.selectedComp)
-      : this.vendorInvoicesService.getVendorInvoices(this.startDate, this.endDate, this.selectedComp);
+      ? this.vendorInvoicesService.getUnpaidVendorInvoices(this.strStartDate, this.strStartDate, this.selectedComp)
+      : this.vendorInvoicesService.getVendorInvoices(this.strStartDate, this.strStartDate, this.selectedComp);
 
     invoiceObservable.subscribe({
       next: (data) => {

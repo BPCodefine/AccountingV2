@@ -12,13 +12,13 @@ export class VendorInvoicesService {
 
   constructor(private httpClient: HttpClient) {}
 
-  getVendorInvoices(fromDate: Date, toDate: Date = new Date(), Company: string): Observable<VendorInvoices[]> {
+  getVendorInvoices(fromDate: string, toDate: string, Company: string): Observable<VendorInvoices[]> {
     return this.httpClient.get<VendorInvoices[]>(environment.apiUrl + '/api/VendorInvoices' +
-      `?FromDate=${fromDate.toISOString().split('T')[0]}&ToDate=${toDate.toISOString().split('T')[0]}&Company=${Company}`);
+      `?FromDate=${fromDate}&ToDate=${toDate}&Company=${Company}`);
     }
 
-  getUnpaidVendorInvoices(fromDate: Date, toDate: Date = new Date(), Company: string): Observable<VendorInvoices[]> {
+  getUnpaidVendorInvoices(fromDate: string, toDate: string, Company: string): Observable<VendorInvoices[]> {
     return this.httpClient.get<VendorInvoices[]>(environment.apiUrl + '/api/VendorInvoices' +
-      `?FromDate=${fromDate.toISOString().split('T')[0]}&ToDate=${toDate.toISOString().split('T')[0]}&Company=${Company}&OnlyOpen=true`);
+      `?FromDate=${fromDate}&ToDate=${toDate}&Company=${Company}&OnlyOpen=true`);
     }
   }

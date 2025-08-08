@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 
 import { DxDateRangeBoxModule, DxDataGridModule } from 'devextreme-angular';
 import { DxDateRangeBoxTypes } from "devextreme-angular/ui/date-range-box"
@@ -17,6 +17,7 @@ import { InvExpensesService } from './InvExpenses.service';
   imports: [CommonModule,
             DxDataGridModule,
             DxDateRangeBoxModule],
+  providers: [DatePipe],
   templateUrl: './InvExpenses.component.html',
   styleUrl: './InvExpenses.component.css'
 })
@@ -28,9 +29,11 @@ export class InvExpensesComponent implements OnInit {
   minDate: Date = new Date(2020, 7, 1);
   startDate: Date = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
   endDate: Date = new Date();
+  strStartDate: string = '';
+  strEndDate: string = '';
   currentValue: [Date, Date] = [this.startDate, this.endDate];
 
-  constructor(private invExpService: InvExpensesService) {}
+  constructor(private datePipe: DatePipe, private invExpService: InvExpensesService) {}
 
   ngOnInit(): void {
     this.FetchInvoices();
@@ -45,7 +48,11 @@ export class InvExpensesComponent implements OnInit {
 
   FetchInvoices() {
     this.loading = true;
-    this.invExpService.getInvoices(this.startDate, this.endDate).subscribe({
+
+    this.strStartDate = this.datePipe.transform(this.startDate, 'yyyy-MM-dd')!;
+    this.strEndDate = this.datePipe.transform(this.endDate, 'yyyy-MM-dd')!;
+
+    this.invExpService.getInvoices(this.strStartDate, this.strEndDate).subscribe({
       next: (data) => {
         this.invoices = data;
         this.loading = false;

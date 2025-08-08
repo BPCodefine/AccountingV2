@@ -12,9 +12,9 @@ export class InvExpensesService {
 
   constructor(private httpClient: HttpClient) {}
 
-  getInvoices(fromDate: Date, toDate: Date = new Date()): Observable<InvExpensesModel[]> {
+  getInvoices(fromDate: string, toDate: string): Observable<InvExpensesModel[]> {
     return this.httpClient.get<InvExpensesModel[]>(this.apiUrl +
-      `/betweenDates?FromDate=${fromDate.toISOString().split('T')[0]}&ToDate=${toDate.toISOString().split('T')[0]}`);
+      `/betweenDates?FromDate=${fromDate}&ToDate=${toDate}`);
     }
 
   getAllInvoices(): Observable<InvExpensesModel[]> {

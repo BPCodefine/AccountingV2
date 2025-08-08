@@ -1,5 +1,5 @@
 import { Component, OnInit, HostListener } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 
 import { DxDateBoxModule, DxTextBoxModule, DxDataGridModule } from 'devextreme-angular';
 import { DxTextBoxTypes } from 'devextreme-angular/ui/text-box'
@@ -17,17 +17,19 @@ import { BankAccountLedgerService } from './BankAccountLedger.service';
             DxDateBoxModule,
             DxTextBoxModule,
             DxDataGridModule],
+  providers: [DatePipe],
   templateUrl: './BankAccountLedger.component.html',
   styleUrl: './BankAccountLedger.component.css'
 })
 export class BankAccountLedgerComponent implements OnInit {
   loading: boolean = true;
   endDate: Date = new Date();
+  strEndDate: string = '';
   accountsText: string = '';
   defAccounts: string[] = [];
   invoices : BankAccountLedgerModel[] = [];
 
-  constructor( private ledgerService: BankAccountLedgerService) {}
+  constructor(private datePipe: DatePipe, private ledgerService: BankAccountLedgerService) {}
 
   ngOnInit(): void {
     this.FetchLedgerLines();
@@ -39,7 +41,9 @@ export class BankAccountLedgerComponent implements OnInit {
 
   FetchLedgerLines(): void {
     this.loading = true;
-    this.ledgerService.getLedgerEntries(this.endDate, this.defAccounts).subscribe(
+    this.strEndDate = this.datePipe.transform(this.endDate, 'yyyy-MM-dd')!;
+
+    this.ledgerService.getLedgerEntries(this.strEndDate, this.defAccounts).subscribe(
       {
       next: (data) => {
         this.invoices = data;
