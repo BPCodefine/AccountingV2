@@ -49,6 +49,8 @@ GET {{AccountingV2_HostAddress}}/api/VendorInvoices?FromDate={{FromDate}}&ToDate
 
 ###
 
-GET {{AccountingV2_HostAddress}}/api/HulkenInvoices?FromDate={{FromDate}}&ToDate={{ToDate}}&ShowUSSales=true
+@FromHDate=2025-01-01
+@ToHDate=2025-12-31
+GET {{AccountingV2_HostAddress}}/api/HulkenInvoices?FromDate={{FromHDate}}&ToDate={{ToHDate}}&ShowUSSales=true
 
 ###

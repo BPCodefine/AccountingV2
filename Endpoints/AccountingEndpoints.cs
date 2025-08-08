@@ -30,8 +30,8 @@ namespace AccountingV2.Endpoints
     }
     public class HulkenQuery
     {
-        public DateTime FromDate { get; set; }
-        public DateTime ToDate { get; set; }
+        public required string FromDate { get; set; }
+        public required string ToDate { get; set; }
         public bool showUSSales { get; set; }
     }
     public static class AccountingEndpoints
@@ -165,15 +165,21 @@ from
 
             app.MapGet("/api/PurchInvAndExpenses/betweenDates", async (IDbConnection c, DBAccess context, [AsParameters] DateInterval betweenDates) =>
             {
-                StringBuilder sqlWithInvNo = new(sqlPurchInvoicesAndExpenses);
-                sqlWithInvNo.Replace("{DBName}", context.dynDBName);
-                sqlWithInvNo.AppendLine($"where InvCTE.PostingDate between '{betweenDates.FromDate}' and '{betweenDates.ToDate}'");
-                sqlWithInvNo.AppendLine(OrderBy);
+                try
+                { 
+                    StringBuilder sqlWithInvNo = new(sqlPurchInvoicesAndExpenses);
+                    sqlWithInvNo.Replace("{DBName}", context.dynDBName);
+                    sqlWithInvNo.AppendLine($"where InvCTE.PostingDate between '{betweenDates.FromDate}' and '{betweenDates.ToDate}'");
+                    sqlWithInvNo.AppendLine(OrderBy);
 
-                var lines = await c.QueryAsync<PIAndExpenses>(sqlWithInvNo.ToString());
-                return Results.Ok(lines);
-            }
-            );
+                    var lines = await c.QueryAsync<PIAndExpenses>(sqlWithInvNo.ToString());
+                    return Results.Ok(lines);
+                }
+                catch (Exception ex)
+                {
+                    return Results.Problem(ex.Message, statusCode: 500);
+                }   
+            });
 
             app.MapGet("/api/BankAccountLedgerItems", async (IDbConnection c, DBAccess context, [AsParameters] LedgerQuery query) =>
             {
@@ -205,12 +211,17 @@ where
 order by
     [Posting Date] Desc
 ");
-
-                sqlBankAccountLedgerEntries.Replace("@toDate", query.ToDate.ToString("yyyy/MM/dd"));
-                sqlBankAccountLedgerEntries.Replace("@MoreAccntList", (query.ExtraAccList?.Length ?? 0) == 0 ? "" : ", " + query.ExtraAccList);
-                var lines = await c.QueryAsync<BankAccountLedgerEntries>(sqlBankAccountLedgerEntries.ToString());
-                return Results.Ok(lines);
-
+                try
+                {
+                    sqlBankAccountLedgerEntries.Replace("@toDate", query.ToDate.ToString("yyyy/MM/dd"));
+                    sqlBankAccountLedgerEntries.Replace("@MoreAccntList", (query.ExtraAccList?.Length ?? 0) == 0 ? "" : ", " + query.ExtraAccList);
+                    var lines = await c.QueryAsync<BankAccountLedgerEntries>(sqlBankAccountLedgerEntries.ToString());
+                    return Results.Ok(lines);
+                }
+                catch (Exception ex)
+                {
+                    return Results.Problem(ex.Message, statusCode: 500);
+                }   
             }
             );
 
@@ -257,10 +268,16 @@ where
     cle.[Posting Date] BETWEEN '{query.FromDate:yyyy-MM-dd}' AND '{query.ToDate:yyyy-MM-dd}'
     AND cle.[Document Type] = 2");
 
-                var lines = await c.QueryAsync<CustomerInvoices>(sql.ToString());
-                return Results.Ok(lines);
-            }
-            );
+                try
+                {
+                    var lines = await c.QueryAsync<CustomerInvoices>(sql.ToString());
+                    return Results.Ok(lines);
+                }
+                catch (Exception ex)
+                {
+                    return Results.Problem(ex.Message, statusCode: 500);
+                }
+            });
 
             app.MapGet("/api/LateCustomerInvoices", async (IDbConnection c, DBAccess context, string Company) =>
             {
@@ -302,10 +319,16 @@ where
 	[Open] = 1
 	and (cle.[Document Type] = 2 OR cle.[Document Type] = 3)");
 
-                var lines = await c.QueryAsync<CustomerInvoices>(sql.ToString());
-                return Results.Ok(lines);
-            }
-            );
+                try
+                {
+                    var lines = await c.QueryAsync<CustomerInvoices>(sql.ToString());
+                    return Results.Ok(lines);
+                }
+                catch (Exception ex)
+                {
+                    return Results.Problem(ex.Message, statusCode: 500);
+                }
+            });
 
             app.MapGet("/api/VendorInvoices", async (IDbConnection c, DBAccess context, [AsParameters] VendorInvQuery query) =>
             {
@@ -350,19 +373,32 @@ where
 	(vle.[Document Type] = 2 OR vle.[Document Type] = 3)
     AND vle.[Posting Date] BETWEEN '{query.FromDate:yyyy-MM-dd}' AND '{query.ToDate:yyyy-MM-dd}'");
 
-                if (query.OnlyOpen.HasValue && query.OnlyOpen.Value)
-                    sql.AppendLine("AND vle.[Open] = 1");
+                try
+                {
+                    if (query.OnlyOpen.HasValue && query.OnlyOpen.Value)
+                        sql.AppendLine("AND vle.[Open] = 1");
 
-                var lines = await c.QueryAsync<VendorInvoices>(sql.ToString());
-                return Results.Ok(lines);
-            }
-            );
+                    var lines = await c.QueryAsync<VendorInvoices>(sql.ToString());
+                    return Results.Ok(lines);
+                }
+                catch (Exception ex)
+                {
+                    return Results.Problem(ex.Message, statusCode: 500);
+                }
+            });
 
             app.MapGet("/api/GetEnabledComps", async (IDbConnection c, DBAccess context, string UserName) =>
             {
-                string sql = $"select [AccessTo] from [SatV2].[Webpages].[WebUserRights] where [UserName] = '{UserName}'";
-                var lines = await c.QueryAsync<string>(sql);
-                return Results.Ok(lines);
+                try
+                {
+                    string sql = $"select [AccessTo] from [SatV2].[Webpages].[WebUserRights] where [UserName] = '{UserName}'";
+                    var lines = await c.QueryAsync<string>(sql);
+                    return Results.Ok(lines);
+                }
+                catch (Exception ex)
+                {
+                    return Results.Problem(ex.Message, statusCode: 500);
+                }
             });
 
             app.MapGet("/api/CustAgedInvoices", async (IDbConnection c, DBAccess context, string Company) =>
@@ -438,10 +474,16 @@ SELECT
 	CASE WHEN lateDays > 90 THEN amountLCY ELSE NULL END AS [lcy90]
 FROM EntryDetails");
 
-                var lines = await c.QueryAsync<CustAgedInvoices>(sql.ToString());
-                return Results.Ok(lines);
-            }
-            );
+                try
+                {
+                    var lines = await c.QueryAsync<CustAgedInvoices>(sql.ToString());
+                    return Results.Ok(lines);
+                }
+                catch (Exception ex)
+                {
+                    return Results.Problem(ex.Message, statusCode: 500);
+                }
+            });
 
             app.MapGet("/api/HulkenInvoices", async (IDbConnection c, DBAccess context, [AsParameters] HulkenQuery hulkenQuery) =>
             {
@@ -498,7 +540,7 @@ WHERE
             sub.[Document No_] = sh.[No_]
             AND sub.[Item Category Code] = 'HULKEN')
     AND ([Item Category Code] = 'HULKEN' OR sl.[Type] = 1) 
-    AND sh.[Posting Date] BETWEEN '{hulkenQuery.FromDate:yyyy-MM-dd}' AND '{hulkenQuery.ToDate:yyyy-MM-dd}'
+    AND sh.[Posting Date] >= '{hulkenQuery.FromDate:yyyy-MM-dd}' AND sh.[Posting Date] <= '{hulkenQuery.ToDate:yyyy-MM-dd}'
     {(hulkenQuery.showUSSales ? "": "AND sh.[Sell-to Customer Name] not like 'Hulken Inc.%'")}
 UNION  
 
@@ -544,14 +586,18 @@ where
             sub.[Document No_] = ch.[No_]
             AND sub.[Item Category Code] = 'HULKEN')
 	AND ([Item Category Code] = 'HULKEN' OR cl.[Type] = 1)
-    AND ch.[Posting Date] BETWEEN '{hulkenQuery.FromDate:yyyy-MM-dd}' AND '{hulkenQuery.ToDate:yyyy-MM-dd}'
+    AND ch.[Posting Date] >= '{hulkenQuery.FromDate:yyyy-MM-dd}' AND ch.[Posting Date] <= '{hulkenQuery.ToDate:yyyy-MM-dd}'
     {(hulkenQuery.showUSSales ? "": "AND ch.[Sell-to Customer Name] not like 'Hulken Inc.%'")}
-
-order by Customer
 ");
-
-                var lines = await c.QueryAsync<HulkenInvoices>(sql.ToString());
-                return Results.Ok(lines);
+                try
+                {
+                    var lines = await c.QueryAsync<HulkenInvoices>(sql.ToString());
+                    return Results.Ok(lines);
+                }
+                catch (Exception ex)
+                {
+                    return Results.Problem(ex.Message, statusCode: 500);
+                }
             });
         }
     }
