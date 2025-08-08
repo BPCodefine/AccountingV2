@@ -49,6 +49,14 @@
   flex-direction: column;
 }
 
+::ng-deep .accStyle {
+  background-color: #e6f2ff;
+}
+
+::ng-deep .lcyStyle {
+  background-color: #eafbe7;
+}
+
 .spinner {
   position: fixed; /* So it’s relative to the viewport */
   top: 200px;

@@ -28,6 +28,7 @@
       [columnAutoWidth]="false"
       rowAutoHeight="true"
       [allowColumnReordering]="true"
+      [showRowLines]="true"
       (onExporting)="onExporting($event)">
 
       <dxo-scrolling mode="virtual"></dxo-scrolling>
@@ -144,15 +145,15 @@
       <dxi-column dataField="invoiceDate" dataType="date" caption="InvDate" width="100" [showWhenGrouped]="true"></dxi-column>
       <dxi-column dataField="dueDate" dataType="date" caption="DueDate" width="100" [showWhenGrouped]="true"></dxi-column>
       <dxi-column dataField="lateDays" dataType="number" caption="lateDays" width="80"></dxi-column>
-      <dxi-column dataField="acc30" dataType="number" caption="-30" width="80"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
-      <dxi-column dataField="acc3060" dataType="number" caption="30-60" width="80"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
-      <dxi-column dataField="acc6090" dataType="number" caption="60-90" width="80"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
-      <dxi-column dataField="acc90" dataType="number" caption="90-" width="80"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
-      <dxi-column dataField="cur" caption="Cur" width="70" [showWhenGrouped]="true"></dxi-column>
-      <dxi-column dataField="lcy30" dataType="number" caption="-30 (LCY)" width="80"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
-      <dxi-column dataField="lcy3060" dataType="number" caption="30-60 (LCY)" width="80"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
-      <dxi-column dataField="lcy6090" dataType="number" caption="60-90 (LCY)" width="80"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
-      <dxi-column dataField="lcy90" dataType="number" caption="90- (LCY)" width="80"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
+      <dxi-column dataField="acc30" dataType="number" caption="-30" width="80" cssClass="accStyle"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
+      <dxi-column dataField="acc3060" dataType="number" caption="30-60" width="80" cssClass="accStyle"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
+      <dxi-column dataField="acc6090" dataType="number" caption="60-90" width="80" cssClass="accStyle"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
+      <dxi-column dataField="acc90" dataType="number" caption="90-" width="80" cssClass="accStyle"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
+      <dxi-column dataField="cur" caption="Cur" width="70" [showWhenGrouped]="true" cssClass="accStyle"></dxi-column>
+      <dxi-column dataField="lcy30" dataType="number" caption="-30 (LCY)" width="80" cssClass="lcyStyle"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
+      <dxi-column dataField="lcy3060" dataType="number" caption="30-60 (LCY)" width="80" cssClass="lcyStyle"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
+      <dxi-column dataField="lcy6090" dataType="number" caption="60-90 (LCY)" width="80" cssClass="lcyStyle"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
+      <dxi-column dataField="lcy90" dataType="number" caption="90- (LCY)" width="80" cssClass="lcyStyle"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
     </dx-data-grid>
   </div>
 </div>
