@@ -476,7 +476,10 @@ SELECT
 	Art.strRemark as Rem,
 	Art.strBagType as BagType,
 	Art.strBagtypeVersion as BagVersion,
-    sl.Quantity,
+    CASE sl.[Type]
+		WHEN 2 THEN sl.Quantity
+		ELSE 0
+	END as Quantity,
     sl.[Unit Price] as UnitPrice,
     CASE sh.[Currency Code]
 		WHEN '' THEN 'EUR'
@@ -494,7 +497,7 @@ WHERE
         WHERE 
             sub.[Document No_] = sh.[No_]
             AND sub.[Item Category Code] = 'HULKEN')
-    AND sl.[Type] <> 0 
+    AND ([Item Category Code] = 'HULKEN' OR sl.[Type] = 1) 
     AND sh.[Posting Date] BETWEEN '{hulkenQuery.FromDate:yyyy-MM-dd}' AND '{hulkenQuery.ToDate:yyyy-MM-dd}'
     {(hulkenQuery.showUSSales ? "": "AND sh.[Sell-to Customer Name] not like 'Hulken Inc.%'")}
 UNION  
@@ -519,7 +522,10 @@ select
 	Art.strRemark as Rem,
 	Art.strBagType as BagType,
 	Art.strBagtypeVersion as BagVersion,
-    cl.Quantity * -1,
+    CASE cl.[Type]
+		WHEN 2 THEN cl.Quantity * -1
+		ELSE 0
+	END as Quantity,
     cl.[Unit Price] * -1,
     CASE ch.[Currency Code]
 		WHEN '' THEN 'EUR'
@@ -537,7 +543,7 @@ where
         WHERE 
             sub.[Document No_] = ch.[No_]
             AND sub.[Item Category Code] = 'HULKEN')
-	and cl.[Type] <> 0 
+	AND ([Item Category Code] = 'HULKEN' OR cl.[Type] = 1)
     AND ch.[Posting Date] BETWEEN '{hulkenQuery.FromDate:yyyy-MM-dd}' AND '{hulkenQuery.ToDate:yyyy-MM-dd}'
     {(hulkenQuery.showUSSales ? "": "AND ch.[Sell-to Customer Name] not like 'Hulken Inc.%'")}
 
