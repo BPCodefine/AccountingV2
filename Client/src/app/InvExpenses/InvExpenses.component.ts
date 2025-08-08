@@ -1,9 +1,13 @@
-import { Component, OnInit, HostListener} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, ElementRef, ViewChild } from '@angular/core';
 
 import { DxDateRangeBoxModule, DxDataGridModule } from 'devextreme-angular';
 import { DxDateRangeBoxTypes } from "devextreme-angular/ui/date-range-box"
+import { exportDataGrid } from 'devextreme-angular/common/export/excel';
+import { DxDataGridTypes } from 'devextreme-angular/ui/data-grid';
+
+import { Workbook } from 'exceljs';
+import { saveAs } from 'file-saver';
 
 import { InvExpensesModel } from './InvExpenses.model';
 import { InvExpensesService } from './InvExpenses.service';
@@ -16,7 +20,7 @@ import { InvExpensesService } from './InvExpenses.service';
   templateUrl: './InvExpenses.component.html',
   styleUrl: './InvExpenses.component.css'
 })
-export class InvExpensesComponent implements OnInit, AfterViewInit {
+export class InvExpensesComponent implements OnInit {
 
   invoices: InvExpensesModel[] = [];
   loading: boolean = true;
@@ -25,23 +29,11 @@ export class InvExpensesComponent implements OnInit, AfterViewInit {
   startDate: Date = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
   endDate: Date = new Date();
   currentValue: [Date, Date] = [this.startDate, this.endDate];
-  gridHeight: number = 0;
 
-  @ViewChild('gridWrapper') gridWrapperRef!: ElementRef;
-
-  constructor(private invExpService: InvExpensesService, private cdr: ChangeDetectorRef) {}
+  constructor(private invExpService: InvExpensesService) {}
 
   ngOnInit(): void {
     this.FetchInvoices();
-  }
-
-  ngAfterViewInit() {
-    this.calculateGridHeight();
-  }
-
-  @HostListener('window:resize')
-  onResize() {
-    this.calculateGridHeight();
   }
 
   onCurrentValueChanged(e: DxDateRangeBoxTypes.ValueChangedEvent) {
@@ -79,8 +71,18 @@ export class InvExpensesComponent implements OnInit, AfterViewInit {
     }
   }
 
-  calculateGridHeight() {
-    this.gridHeight = window.innerHeight - 120;
-    this.cdr.detectChanges();
+  onExporting(e: DxDataGridTypes.ExportingEvent) {
+    const workbook = new Workbook();
+    const worksheet = workbook.addWorksheet('Data');
+
+    exportDataGrid({
+      component: e.component,
+      worksheet,
+      autoFilterEnabled: true,
+    }).then(() => {
+      workbook.xlsx.writeBuffer().then((buffer) => {
+        saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'DataGrid.xlsx');
+      });
+    });
   }
 }

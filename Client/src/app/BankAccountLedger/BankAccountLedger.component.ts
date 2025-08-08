@@ -1,6 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, ElementRef, ViewChild } from '@angular/core';
+
 import { DxDateBoxModule, DxTextBoxModule, DxDataGridModule } from 'devextreme-angular';
 import { DxTextBoxTypes } from 'devextreme-angular/ui/text-box'
 import { DxDataGridTypes } from 'devextreme-angular/ui/data-grid';
@@ -16,33 +16,21 @@ import { BankAccountLedgerService } from './BankAccountLedger.service';
   imports: [CommonModule,
             DxDateBoxModule,
             DxTextBoxModule,
-             DxDataGridModule],
+            DxDataGridModule],
   templateUrl: './BankAccountLedger.component.html',
   styleUrl: './BankAccountLedger.component.css'
 })
-export class BankAccountLedgerComponent implements OnInit, AfterViewInit  {
+export class BankAccountLedgerComponent implements OnInit {
   loading: boolean = true;
   endDate: Date = new Date();
   accountsText: string = '';
   defAccounts: string[] = [];
-  ledgerLines : BankAccountLedgerModel[] = [];
-  gridHeight: number = 0;
+  invoices : BankAccountLedgerModel[] = [];
 
-  @ViewChild('gridWrapper') gridWrapperRef!: ElementRef;
-
-  constructor( private ledgerService: BankAccountLedgerService, private cdr: ChangeDetectorRef) {}
+  constructor( private ledgerService: BankAccountLedgerService) {}
 
   ngOnInit(): void {
     this.FetchLedgerLines();
-  }
-
-  ngAfterViewInit() {
-    this.calculateGridHeight();
-  }
-
-  @HostListener('window:resize')
-  onResize() {
-    this.calculateGridHeight();
   }
 
   accListValueChanged(data: DxTextBoxTypes.ValueChangedEvent) {
@@ -52,10 +40,9 @@ export class BankAccountLedgerComponent implements OnInit, AfterViewInit  {
   FetchLedgerLines(): void {
     this.loading = true;
     this.ledgerService.getLedgerEntries(this.endDate, this.defAccounts).subscribe(
-      /*response => {console.log('✅ Response:', response);}*/
       {
       next: (data) => {
-        this.ledgerLines = data;
+        this.invoices = data;
         this.loading = false;
       },
       error: (error) => {
@@ -79,10 +66,5 @@ export class BankAccountLedgerComponent implements OnInit, AfterViewInit  {
         saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'DataGrid.xlsx');
       });
     });
-  }
-
-  calculateGridHeight () {
-    this.gridHeight = window.innerHeight - 150;
-    this.cdr.detectChanges();
   }
 }
