@@ -81,8 +81,8 @@ export class VendorInvoicesComponent implements OnInit {
     this.strEndDate = this.datePipe.transform(this.endDate, 'yyyy-MM-dd')!;
 
     const invoiceObservable = this.showUnpaid
-      ? this.vendorInvoicesService.getUnpaidVendorInvoices(this.strStartDate, this.strStartDate, this.selectedComp)
-      : this.vendorInvoicesService.getVendorInvoices(this.strStartDate, this.strStartDate, this.selectedComp);
+      ? this.vendorInvoicesService.getUnpaidVendorInvoices(this.strStartDate, this.strEndDate, this.selectedComp)
+      : this.vendorInvoicesService.getVendorInvoices(this.strStartDate, this.strEndDate, this.selectedComp);
 
     invoiceObservable.subscribe({
       next: (data) => {
