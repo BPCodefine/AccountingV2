@@ -18,8 +18,10 @@
   gap: 1rem;
 }
 
-.filter-button {
-  white-space: nowrap;
+.Comps {
+  width: 80px !important;
+  min-width: 80px !important;
+  max-width: 80px !important;
   margin-top: 8px;
 }
 

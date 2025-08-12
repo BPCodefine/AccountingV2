@@ -18,9 +18,10 @@
   gap: 1rem;
 }
 
-.filter-button {
-  white-space: nowrap;
-  margin-top: 8px;
+.Comps {
+  width: 80px !important;
+  min-width: 80px !important;
+  max-width: 80px !important;
 }
 
 .dx-fieldset {
