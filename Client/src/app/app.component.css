@@ -8,3 +8,7 @@
   height: 32px;
   width: auto;
 }
+
+mat-sidenav {
+  width: 300px;
+}

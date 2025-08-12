@@ -45,6 +45,7 @@
   height: calc(100vh - 120px); /* Full height minus the top offset */
   display: flex;
   flex-direction: column;
+  margin-left: 10px;
 }
 
 ::ng-deep .VendorInvDataGrid .dx-datagrid-search-panel {

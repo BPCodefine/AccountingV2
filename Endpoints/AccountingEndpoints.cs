@@ -33,6 +33,7 @@ namespace AccountingV2.Endpoints
         public required string FromDate { get; set; }
         public required string ToDate { get; set; }
         public bool showUSSales { get; set; }
+        public required string ConvertTo { get; set; }
     }
     public static class AccountingEndpoints
     {
@@ -527,7 +528,11 @@ SELECT
 		WHEN '' THEN 'EUR'
 		ELSE sh.[Currency Code]
 	END as Cur,
-    sl.[Amount]
+    sl.[Amount],
+    CASE sh.[Currency Code]
+		WHEN '' THEN sl.[Amount] * SatV2.dbo.getDynExchangeRate('EUR', '{hulkenQuery.ConvertTo}', sh.[Posting Date])
+		ELSE sl.[Amount] * SatV2.dbo.getDynExchangeRate(sh.[Currency Code], '{hulkenQuery.ConvertTo}', sh.[Posting Date])
+	END as AmountConv	
 FROM 
     {context.dynDBName}.[CDF$Sales Invoice Header$437dbf0e-84ff-417a-965d-ed2bb9650972] sh
 	INNER JOIN {context.dynDBName}.[CDF$Sales Invoice Line$437dbf0e-84ff-417a-965d-ed2bb9650972] sl ON sh.[No_] = sl.[Document No_]
@@ -573,7 +578,11 @@ select
 		WHEN '' THEN 'EUR'
 		ELSE ch.[Currency Code]
 	END as Cur,
-    cl.[Amount] * -1
+    cl.[Amount] * -1,
+    CASE ch.[Currency Code]
+		WHEN '' THEN cl.[Amount] * SatV2.dbo.getDynExchangeRate('EUR', '{hulkenQuery.ConvertTo}', ch.[Posting Date]) * -1
+		ELSE cl.[Amount] * SatV2.dbo.getDynExchangeRate(ch.[Currency Code], '{hulkenQuery.ConvertTo}', ch.[Posting Date]) * -1
+	END as AmountConv
 from 
 	{context.dynDBName}.[CDF$Sales Cr_Memo Header$437dbf0e-84ff-417a-965d-ed2bb9650972] ch
 	inner join {context.dynDBName}.[CDF$Sales Cr_Memo Line$437dbf0e-84ff-417a-965d-ed2bb9650972] cl on ch.No_ = cl.[Document No_]

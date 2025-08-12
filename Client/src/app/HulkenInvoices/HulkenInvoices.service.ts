@@ -12,9 +12,9 @@ export class HulkenInvoicesService {
 
   constructor(private httpClient: HttpClient) {}
 
-  getHulkenInvoices(fromDate: string, toDate: string, showUSSales: boolean): Observable<HulkenInvoices[]> {
+  getHulkenInvoices(fromDate: string, toDate: string, showUSSales: boolean, convertTo: string): Observable<HulkenInvoices[]> {
     return this.httpClient.get<HulkenInvoices[]>(this.apiUrl +
-      `?FromDate=${fromDate}&ToDate=${toDate}&ShowUSSales=${showUSSales}`);
+      `?FromDate=${fromDate}&ToDate=${toDate}&ShowUSSales=${showUSSales}&ConvertTo=${convertTo}`);
     }
   }
 

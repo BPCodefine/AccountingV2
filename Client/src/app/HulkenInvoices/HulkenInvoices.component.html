@@ -13,6 +13,21 @@
           (onValueChanged)="onCurrentValueChanged($event)">
         </dx-date-range-box>
 
+        <span class="label-text">Consolidate to:</span>
+        <dx-select-box class="ConvertToSelectBox" ID="ConvertToSelectBox"
+          [items]="Currencies"
+          [(value)]="convTo"
+          (onValueChanged)="FetchInvoices()">
+        </dx-select-box>
+        <dx-tooltip
+          target="#ConvertToSelectBox"
+          showEvent="dxhoverstart"
+          hideEvent="dxhoverend">
+          <div *dxTemplate="let data of 'content'">
+              <p>XRate from the posting date of the invoice</p>
+          </div>
+        </dx-tooltip>
+
         <dx-check-box
           class="showUSSales"
           [(value)]="showUSSales"
@@ -80,6 +95,21 @@
             precision="2"
             displayFormat="Amount: {0}">
         </dxi-group-item>
+        <dxi-group-item
+            column="amountConv"
+            summaryType="sum"
+            [showInGroupFooter]="true"
+            valueFormat="fixedPoint"
+            precision="2"
+            displayFormat="{0}">
+        </dxi-group-item>
+        <dxi-group-item
+            column="amountConv"
+            summaryType="sum"
+            valueFormat="fixedPoint"
+            precision="2"
+            displayFormat="Conv.Amount: {0}">
+        </dxi-group-item>
         <dxi-total-item
             column="Quantity"
             summaryType="sum"
@@ -89,11 +119,11 @@
             displayFormat="{0}">
         </dxi-total-item>
         <dxi-total-item
-            column="Amount"
+            column="amountConv"
             summaryType="sum"
-            showInColumn="Amount"
+            showInColumn="amountConv"
             valueFormat="fixedPoint"
-            precision="2"
+            precision="0"
             displayFormat="{0}">
         </dxi-total-item>
       </dxo-summary>
@@ -113,8 +143,9 @@
 
       <dxi-column dataField="quantity" caption="Quantity" dataType="number" format="#,##0." width="70"></dxi-column>
       <dxi-column dataField="unitPrice" caption="Unit Price" dataType="number" format="#,##0.00" width="100"></dxi-column>
-      <dxi-column dataField="cur" caption="Currency" width="50" [showWhenGrouped]="true"></dxi-column>
       <dxi-column dataField="amount" caption="Amount" dataType="number" format="#,##0.00" width="100"></dxi-column>
+      <dxi-column dataField="cur" caption="Currency" width="50" [showWhenGrouped]="true" [groupIndex]="0"></dxi-column>
+      <dxi-column dataField="amountConv" caption="Conv.Amount" dataType="number" format="#,##0.00" width="100" cssClass="amountConvStyle"></dxi-column>
 
       <dxi-column dataField="size" caption="Size" width="80" [showWhenGrouped]="true"></dxi-column>
       <dxi-column dataField="color" caption="Color" width="110" [showWhenGrouped]="true"></dxi-column>

@@ -15,11 +15,34 @@
 .filter-container {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 12px;
+}
+
+.filter-container > * {
+  display: flex;
+  align-items: center;
 }
 
 .showUSSales {
   margin-top: 8px;
+}
+
+.label-text {
+  display: inline-flex;
+  align-items: center;
+  height: 100%; /* Match height of adjacent components */
+  font-size: 14px; /* Match font size if needed */
+  margin-top: 8px; /* Optional fine-tuning */
+}
+
+::ng-deep .ConvertToSelectBox {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  margin-top: 6px;
+  width: 80px !important;
+  min-width: 80px !important;
+  max-width: 80px !important;
 }
 
 .dx-fieldset {
@@ -36,6 +59,7 @@
   height: calc(100vh - 120px); /* Full height minus the top offset */
   display: flex;
   flex-direction: column;
+  padding-left: 10px;
 }
 
 ::ng-deep .HulkenGrid .dx-datagrid-search-panel {
@@ -46,6 +70,10 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+}
+
+::ng-deep .amountConvStyle {
+  background-color: #e6f2ff;
 }
 
 .spinner {

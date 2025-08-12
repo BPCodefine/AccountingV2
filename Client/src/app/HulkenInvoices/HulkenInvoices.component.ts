@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 
-import { DxDateRangeBoxModule, DxCheckBoxModule, DxDataGridModule } from 'devextreme-angular';
+import { DxDateRangeBoxModule, DxCheckBoxModule, DxSelectBoxModule, DxDataGridModule, DxTooltipModule} from 'devextreme-angular';
 import { DxDateRangeBoxTypes } from "devextreme-angular/ui/date-range-box"
 import { exportDataGrid } from 'devextreme-angular/common/export/excel';
 import { DxDataGridTypes } from 'devextreme-angular/ui/data-grid';
@@ -17,6 +17,8 @@ import { HulkenInvoices } from './HulkenInvoices.model';
   imports: [CommonModule,
             DxDataGridModule,
             DxCheckBoxModule,
+            DxSelectBoxModule,
+            DxTooltipModule,
             DxDateRangeBoxModule],
   providers: [DatePipe],
   templateUrl: './HulkenInvoices.component.html',
@@ -32,6 +34,8 @@ export class HulkenInvoicesComponent implements OnInit{
   strEndDate: string = '';
   currentValue: [Date, Date] = [this.startDate, this.endDate];
   showUSSales: boolean = false;
+  Currencies: string[] = ['CHF', 'EUR', 'USD'];
+  convTo: string = 'EUR';
 
   invoices: HulkenInvoices[] = [];
 
@@ -52,7 +56,7 @@ export class HulkenInvoicesComponent implements OnInit{
     this.strEndDate = this.datePipe.transform(this.endDate, 'yyyy-MM-dd')!;
 
     this.loading = true;
-    this.hulkenInvoicesService.getHulkenInvoices(this.strStartDate, this.strEndDate, this.showUSSales).subscribe({
+    this.hulkenInvoicesService.getHulkenInvoices(this.strStartDate, this.strEndDate, this.showUSSales, this.convTo).subscribe({
       next: (data) => {
         this.invoices = data;
         this.loading = false;

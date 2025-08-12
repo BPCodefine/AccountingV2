@@ -21,5 +21,6 @@
         public decimal UnitPrice { get; set; }
         public required string Cur { get; set; }
         public decimal Amount { get; set; }
+        public decimal AmountConv { get; set; }
     }
 }

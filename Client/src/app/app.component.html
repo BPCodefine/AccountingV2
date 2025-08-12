@@ -10,11 +10,12 @@
   </mat-toolbar-row>
 </mat-toolbar>
 
-<mat-sidenav-container>
-  <mat-sidenav #sidenav opened mode="side" [style.width]="'200px'">
+<mat-sidenav-container
+  (backdropClick)="close()">
+  <mat-sidenav #sidenav mode="over">
     <mat-nav-list>
       @for(item of menuItems; track $index){
-        <a mat-list-item [routerLink]="item.route">
+        <a mat-list-item [routerLink]="item.route" (click)="close()">
           <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
           <span>{{ item.label }}</span>
         </a>

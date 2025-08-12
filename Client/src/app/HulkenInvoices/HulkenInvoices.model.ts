@@ -18,4 +18,5 @@ export interface HulkenInvoices {
   unitPrice: number;
   cur: string;
   amount: number;
+  amountConv: number;
 }
