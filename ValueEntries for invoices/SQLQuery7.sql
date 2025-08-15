@@ -2,7 +2,7 @@ WITH InvLines AS (
     SELECT 
         sh.No_ AS INo,
         sh.[Posting Date] AS InvDate,
-        sl.[Line no_] AS LNo,
+        sl.[Line no_] AS InvLineNo,
         sl.No_ AS ArticleNo,
 		sl.Quantity,
         COALESCE(sl.[Shipment No_], sha.[Shipping No_], '') AS ShipNo,
@@ -13,9 +13,14 @@ WITH InvLines AS (
             ON sh.No_ = sl.[Document No_]
         LEFT JOIN [TRANSPACNAV21].[dbo].[CDF$Sales Header Archive$437dbf0e-84ff-417a-965d-ed2bb9650972] sha 
             ON sh.No_ = sha.[Posting No_]
+		LEFT JOIN TRANSPACNAV21.dbo.[CDF$Sales Shipment Header$437dbf0e-84ff-417a-965d-ed2bb9650972] ssh 
+			ON ssh.No_ = sl.[Shipment No_]
+		INNER JOIN TRANSPACNAV21.dbo.[CDF$Sales Shipment Line$437dbf0e-84ff-417a-965d-ed2bb9650972] ssline 
+			ON ssh.No_ = ssline.[Document No_]
 		LEFT JOIN [TRANSPACNAV21].[dbo].[CDF$Item Ledger Entry$437dbf0e-84ff-417a-965d-ed2bb9650972] ile0
 			ON sl.[Shipment No_] = ile0.[Document No_]
 			AND sl.[No_] = ile0.[Item No_]
+			AND ssline.[Line No_] = ile0.[Document Line No_]
         LEFT JOIN [TRANSPACNAV21].[dbo].[CDF$Item Ledger Entry$437dbf0e-84ff-417a-965d-ed2bb9650972] ile1 
             ON sha.[Shipping No_] = ile1.[Document No_]
             AND sl.[Line no_] = ile1.[Document Line No_]
@@ -32,11 +37,15 @@ WITH InvLines AS (
 
 SELECT 
     InvLines.INo,
-	InvLines.LNo,
+	InvLines.InvLineNo,
 	InvLines.LotNo,
 	InvLines.Quantity,
     ve.[Item Charge No_], 
-	ve.*
+	ve.[Valued Quantity] as Quantity,
+	ve.[Cost Amount (Actual)] as Cost,
+	ve.[Cost per Unit] as CostPerUnit
+	--, ve.[Cost Amount (Non-Invtbl_)] as NonInventoriableCost
+	, ve.*
 FROM 
     InvLines
     INNER JOIN [TRANSPACNAV21].[dbo].[CDF$Item Ledger Entry$437dbf0e-84ff-417a-965d-ed2bb9650972] ile 
@@ -48,10 +57,12 @@ FROM
 		AND ve.[Item Charge No_] <> 'FXADJ'
 		AND ve.[Item Charge No_] <> 'CONTRACTED WORK'
 		--AND ve.[Item Ledger Entry Type] = 0
-		--AND ve.[Cost Amount (Actual)] <> 0.0
-		and InvLines.INo = 'CDF-CH-24-0055'
-		and InvLines.LNo = '10000'
+		AND ve.[Document Type] = 6
+		AND ve.[Cost Amount (Actual)] <> 0.0
+WHERE
+	InvLines.INo = 'CDF-BE-24-0114'
+	--and InvLines.LNo = '20000'
 ORDER BY 
     InvLines.INo, 
-	InvLines.LNo,
+	InvLines.InvLineNo,
 	ve.[Item Charge No_]
