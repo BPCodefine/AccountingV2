@@ -28,7 +28,7 @@ export class VendorInvoicesComponent implements OnInit {
   username = '';
   loading: boolean = true;
 
-  minDate: Date = new Date(2020, 7, 1);
+  minDate: Date = new Date(1999, 12, 1);
   startDate: Date = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
   endDate: Date = new Date();
   strStartDate: string = '';
