@@ -33,6 +33,7 @@ export class AppComponent {
     { icon: 'account_balance', label: 'BankAccountLedger', route: 'BankAccountLedger' },
     { icon: 'receipt_long', label: 'CustInvoices', route: 'CustomerInvoices' },
     { icon: 'request_quote', label: 'CustAgedInvoices', route: 'CustomerAgedInvoices' },
+    { icon: 'account_balance', label: 'CustBalanceFromLedger', route: 'CustBalFromLedg'},
     { icon: 'description', label: 'VendorInvoices', route: 'VendorInvoices' },
     { icon: 'receipt', label: 'HulkenInvoices', route: 'HulkenInvoices' }
   ];

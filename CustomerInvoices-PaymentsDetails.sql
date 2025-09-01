@@ -17,13 +17,14 @@ SELECT
     cle.[Description],
     CAST(cle.[Due Date] AS DATE) AS DueDate,
     CASE cle.[Currency Code]
-        WHEN '' THEN '{DefCur}'
+        WHEN '' THEN 'EUR'
         ELSE cle.[Currency Code]
     END AS Cur,
     ds.OrigAmount,
     ds.RemainingAmount,
     dcle.[Document No_] AS AppliedDocNo,
-    dcle.Amount AS AppliedAmount
+    dcle.Amount AS AppliedAmount,
+	dcle.[Posting Date] as PostingDate
 FROM
     transpacnav21.dbo.[cdf$Customer$437dbf0e-84ff-417a-965d-ed2bb9650972] cust
 INNER JOIN 

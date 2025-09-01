@@ -5,6 +5,7 @@ import { InvExpensesComponent } from './InvExpenses/InvExpenses.component';
 import { BankAccountLedgerComponent } from './BankAccountLedger/BankAccountLedger.component';
 import { CustomerInvoicesComponent } from './CustomerInvoices/CustomerInvoices.component';
 import { CustAgedInvoicesComponent } from './CustAgedInvoices/CustAgedInvoices.component';
+import { CustBalFromLedgComponent } from './CustBalFromLedg/CustBalFromLedg.component';
 import { VendorInvoicesComponent } from './VendorInvoices/VendorInvoices.component';
 import { HulkenInvoicesComponent } from './HulkenInvoices/HulkenInvoices.component';
 
@@ -15,6 +16,7 @@ export const routes: Routes = [
     { path: 'BankAccountLedger', component: BankAccountLedgerComponent},
     { path: 'CustomerInvoices', component: CustomerInvoicesComponent},
     { path: 'CustomerAgedInvoices', component: CustAgedInvoicesComponent},
+    { path: 'CustBalFromLedg', component: CustBalFromLedgComponent },
     { path: 'VendorInvoices', component: VendorInvoicesComponent},
     { path: 'HulkenInvoices', component: HulkenInvoicesComponent }
 ]

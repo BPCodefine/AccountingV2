@@ -55,3 +55,8 @@ GET {{AccountingV2_HostAddress}}/api/VendorInvoices?FromDate={{FromDate}}&ToDate
 GET {{AccountingV2_HostAddress}}/api/HulkenInvoices?FromDate={{FromHDate}}&ToDate={{ToHDate}}&ShowUSSales=true&ConvertTo={{ConvertTo}}
 
 ###
+
+@Company=CDF
+GET {{AccountingV2_HostAddress}}/api/CustBalanceFromLedger?Company={{Company}}
+
+###
