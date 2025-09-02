@@ -609,12 +609,12 @@ where
                 }
             });
 
-            app.MapGet("/api/CustBalanceFromLedger", async(IDbConnection c, DBAccess context, string Company) =>
+            app.MapGet("/api/CustBalanceFromLedger", async(IDbConnection c, DBAccess context, [AsParameters] CustInvQuery query) =>
             {
                 string DefCur;
                 try
                 {
-                    DefCur = GetDefaultCurrency(Company, context.dynDBName, c);
+                    DefCur = GetDefaultCurrency(query.Company, context.dynDBName, c);
                 }
                 catch (InvalidOperationException ex)
                 {
@@ -628,7 +628,7 @@ WITH DetailedSums AS (
         SUM(CASE WHEN [Ledger Entry Amount] = 1 THEN Amount ELSE 0 END) AS OrigAmount,
         SUM(Amount) AS RemainingAmount
     FROM 
-        {context.dynDBName}.[{Company}$Detailed Cust_ Ledg_ Entry$437dbf0e-84ff-417a-965d-ed2bb9650972]
+        {context.dynDBName}.[{query.Company}$Detailed Cust_ Ledg_ Entry$437dbf0e-84ff-417a-965d-ed2bb9650972]
     GROUP BY 
         [Cust_ Ledger Entry No_]
 )
@@ -641,21 +641,21 @@ SELECT
     cle.[Description],
     CAST(cle.[Due Date] AS DATE) AS DueDate,
     CASE cle.[Currency Code]
-        WHEN '' THEN 'EUR'
+        WHEN '' THEN '{DefCur}'
         ELSE cle.[Currency Code]
     END AS Cur,
     ds.OrigAmount,
     ds.RemainingAmount,
     dcle.[Document No_] AS AppliedDocNo,
     dcle.Amount AS AppliedAmount,
-	dcle.[Posting Date] as PostingDate
+	dcle.[Posting Date] as AppliedPostingDate
 FROM
-    {context.dynDBName}.[{Company}$Customer$437dbf0e-84ff-417a-965d-ed2bb9650972] cust
+    {context.dynDBName}.[{query.Company}$Customer$437dbf0e-84ff-417a-965d-ed2bb9650972] cust
 INNER JOIN 
-    {context.dynDBName}.[{Company}$Cust_ Ledger Entry$437dbf0e-84ff-417a-965d-ed2bb9650972] cle 
+    {context.dynDBName}.[{query.Company}$Cust_ Ledger Entry$437dbf0e-84ff-417a-965d-ed2bb9650972] cle 
     ON cust.[No_] = cle.[Customer No_]
 LEFT JOIN 
-    {context.dynDBName}.[{Company}$Detailed Cust_ Ledg_ Entry$437dbf0e-84ff-417a-965d-ed2bb9650972] dcle 
+    {context.dynDBName}.[{query.Company}$Detailed Cust_ Ledg_ Entry$437dbf0e-84ff-417a-965d-ed2bb9650972] dcle 
     ON cle.[Entry No_] = dcle.[Cust_ Ledger Entry No_]
     AND dcle.[Entry Type] = 2 -- = Application
     AND dcle.Unapplied = 0
@@ -663,6 +663,7 @@ LEFT JOIN
     DetailedSums ds ON cle.[Entry No_] = ds.EntryNo
 WHERE
     cle.[Document Type] IN (0, 2, 3, 6)
+    AND cle.[Posting Date] BETWEEN '{query.FromDate:yyyy-MM-dd}' AND '{query.ToDate:yyyy-MM-dd}'
 ");
                 try
                 {
