@@ -10,19 +10,34 @@
   </mat-toolbar-row>
 </mat-toolbar>
 
-<mat-sidenav-container
-  (backdropClick)="close()">
+<mat-sidenav-container (backdropClick)="close()">
   <mat-sidenav #sidenav mode="over">
     <mat-nav-list>
-      @for(item of menuItems; track $index){
-        <a mat-list-item [routerLink]="item.route" (click)="close()">
-          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
-          <span>{{ item.label }}</span>
-        </a>
+      @for (item of menuItems; track item.label) {
+        @if (!item.children) {
+          <a mat-list-item [routerLink]="item.route" (click)="sidenav.close()">
+            <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+            <span>{{ item.label }}</span>
+          </a>
+        } @else {
+          <a mat-list-item [matMenuTriggerFor]="subMenu">
+            <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+            <span>{{ item.label }}</span>
+          </a>
+
+          <mat-menu #subMenu="matMenu" [overlapTrigger]="false" class="nested-menu">
+            @for (child of item.children; track child.label) {
+              <button mat-menu-item [routerLink]="child.route" (click)="sidenav.close()">
+                <mat-icon>{{ child.icon }}</mat-icon>
+                <span>{{ child.label }}</span>
+              </button>
+            }
+          </mat-menu>
+        }
       }
     </mat-nav-list>
   </mat-sidenav>
-    <mat-sidenav-content class="sidenav-content">
-      <router-outlet></router-outlet>
-    </mat-sidenav-content>
+  <mat-sidenav-content class="sidenav-content">
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
 </mat-sidenav-container>
