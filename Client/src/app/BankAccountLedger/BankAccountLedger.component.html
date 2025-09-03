@@ -31,10 +31,11 @@
   </div>
 </div>
 
-<div *ngIf="loading" class="spinner">
+@if (loading) {
+<div class="spinner">
   Loading... Please wait
 </div>
-<div *ngIf="!loading">
+} @else {
   <div #gridWrapper class="grid-wrapper">
     <dx-data-grid class="BankAccGrid"
       [dataSource]="invoices"
@@ -70,4 +71,4 @@
       <dxi-column dataField="runningTotalAmountLCY" dataType="number" caption="Running Total (LCY)" width="100" format=",##0.00"></dxi-column>
     </dx-data-grid>
   </div>
-</div>
+}

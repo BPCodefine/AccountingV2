@@ -36,21 +36,21 @@ export class AppComponent {
     { icon: 'people',
       label: 'Customers',
       children: [
-        { icon: 'receipt_long', label: 'CustInvoices', route: 'CustomerInvoices' },
-        { icon: 'request_quote', label: 'CustAgedInvoices', route: 'CustomerAgedInvoices' },
-        { icon: 'account_balance', label: 'CustBalanceFromLedger', route: 'CustBalFromLedg'},
-        { icon: 'receipt', label: 'HulkenInvoices', route: 'HulkenInvoices' }
+        { icon: 'receipt_long', label: 'Invoice list', route: 'CustomerInvoices' },
+        { icon: 'request_quote', label: 'Aged Invoices', route: 'CustomerAgedInvoices' },
+        { icon: 'account_balance', label: 'Cust. Balance from Ledger', route: 'CustBalFromLedg'},
+        { icon: 'receipt', label: 'Hulken Invoices', route: 'HulkenInvoices' }
       ]
     },
     {
       icon: 'inventory',
       label: 'Vendors',
       children: [
-        { icon: 'assignment', label: 'InvExpenses', route: 'InvExpenses' },
-        { icon: 'description', label: 'VendorInvoices', route: 'VendorInvoices' },
+        { icon: 'assignment', label: 'Invoices and Expenses', route: 'InvExpenses' },
+        { icon: 'description', label: 'Invoice list', route: 'VendorInvoices' },
       ]
     },
-    { icon: 'account_balance', label: 'BankAccountLedger', route: 'BankAccountLedger' },
+    { icon: 'account_balance', label: 'Bank Account Ledger', route: 'BankAccountLedger' },
   ];
 
   close()

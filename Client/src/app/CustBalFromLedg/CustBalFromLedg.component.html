@@ -1,6 +1,6 @@
 <div class="dx-fieldset">
   <div class="header-container">
-    <h2 class="page-header">Customer Invoices</h2>
+    <h2 class="page-header">Customer Balance from Ledger</h2>
     <div class="dx-field">
       <div class="filter-container">
         <dx-select-box class="Comps"
@@ -24,10 +24,12 @@
     </div>
   </div>
 </div>
-<div *ngIf="loading" class="spinner">
+
+@if (loading) {
+<div class="spinner">
   Loading... Please wait
 </div>
-<div *ngIf="!loading">
+} @else {
   <div #gridWrapper class="grid-wrapper">
     <dx-data-grid class="CustInvGrid"
       [dataSource]="invoices"
@@ -64,4 +66,4 @@
 
     </dx-data-grid>
   </div>
-</div>
+}
