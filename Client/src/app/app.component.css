@@ -12,3 +12,8 @@
 mat-sidenav {
   width: 300px;
 }
+
+::ng-deep .nested-menu {
+  transform: translateX(24px)
+}
+

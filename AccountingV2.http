@@ -57,6 +57,8 @@ GET {{AccountingV2_HostAddress}}/api/HulkenInvoices?FromDate={{FromHDate}}&ToDat
 ###
 
 @Company=CDF
-GET {{AccountingV2_HostAddress}}/api/CustBalanceFromLedger?Company={{Company}}
+@FromDate=2024-01-01
+@ToDate=2024-01-31
+GET {{AccountingV2_HostAddress}}/api/CustBalanceFromLedger?FromDate={{FromDate}}&ToDate={{ToDate}}&Company={{Company}}
 
 ###

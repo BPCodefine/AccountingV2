@@ -39,10 +39,11 @@
   </div>
 </div>
 
-<div *ngIf="loading" class="spinner">
+@if (loading) {
+<div class="spinner">
   Loading... Please wait
 </div>
-<div *ngIf="!loading">
+} @else {
   <div #gridWrapper class="grid-wrapper">
     <dx-data-grid class="HulkenGrid"
       [dataSource]="invoices"
@@ -154,4 +155,4 @@
       <dxi-column dataField="bagVersion" caption="Bag Version" width="80" [showWhenGrouped]="true"></dxi-column>
     </dx-data-grid>
     </div>
-</div>
+  }

@@ -11,4 +11,5 @@ export interface CustBalanceFromLedger {
   appliedDocNo: string;         // dcle.[Document No_]
   appliedAmount: number;        // dcle.Amount
   appliedPostingDate: Date;    // dcle.[Posting Date]
+  status: string;
 }

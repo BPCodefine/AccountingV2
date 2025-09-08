@@ -15,10 +15,11 @@
   </div>
 </div>
 
-<div *ngIf="loading" class="spinner">
+@if (loading) {
+<div class="spinner">
   Loading... Please wait
 </div>
-<div *ngIf="!loading">
+} @else {
   <div #gridWrapper class="grid-wrapper">
     <dx-data-grid class="CustAgedGrid"
       [dataSource]="invoices"
@@ -156,4 +157,4 @@
       <dxi-column dataField="lcy90" dataType="number" caption="90- (LCY)" width="100" cssClass="lcyStyle"><dxo-format type="fixedPoint" precision="2"></dxo-format></dxi-column>
     </dx-data-grid>
   </div>
-</div>
+}
