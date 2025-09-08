@@ -40,7 +40,7 @@ FROM
 		AND ve.[Item No_] = sl.No_
 		AND ve.[Posting Date] <= sh.[Posting Date]
 WHERE 
-	sh.No_ = 'CDF-BE-24-0039' AND
+	sh.No_ = 'CDF-DE-24-0212' AND
     sl.Type = 2
     AND sh.[Posting Date] > '2024-01-01'
     AND sl.[Gen_ Prod_ Posting Group] IN ('GOODS', 'PRODUCT', 'RAWMAT')
